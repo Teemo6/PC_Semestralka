@@ -1,7 +1,7 @@
 #ifndef PC_SEMESTRALKA_CONFIG_H
 #define PC_SEMESTRALKA_CONFIG_H
 
-/* Maximální velikost slova */
+/* Maximální velikost slova v souboru */
 #define MAX_WORD_SIZE 256
 
 /* Cesta k souborům */
