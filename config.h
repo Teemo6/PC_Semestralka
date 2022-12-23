@@ -1,8 +1,11 @@
 #ifndef PC_SEMESTRALKA_CONFIG_H
 #define PC_SEMESTRALKA_CONFIG_H
 
-/* Maximální velikost slova v souboru */
-#define MAX_WORD_SIZE 256
+/* Pocet znaku v souboru */
+#define FILE_CHAR_COUNT 3191
+
+/* Maximalni velikost slova */
+#define STRING_LENGHT 256
 
 /* Cesta k souborům */
 #define FILE_PATH "../data/test/"
