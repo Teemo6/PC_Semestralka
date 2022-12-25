@@ -5,16 +5,19 @@
 #include "config.h"
 #include "hash_table.h"
 
+/* Pocet argumentu */
+#define ARG_COUNT 8
+
 void help(void){
-    printf("Usage:\n   spamid.exe <spam> <spam-cnt> <ham> <ham-cnt> <test> <test-cnt> <out-file>\n\n");
-    printf("Example:\n   spamid.exe spam 10 ham 20 test 50 result.txt\n\n");
+    printf("Usage:\n\tspamid.exe <spam> <spam-cnt> <ham> <ham-cnt> <test> <test-cnt> <out-file>\n\n");
+    printf("Example:\n\tspamid.exe spam 10 ham 20 test 50 result.txt\n\n");
 }
 
 void handle_input(int argc, char *argv[]){
     long spam_cnt, ham_cnt, test_cnt;
 
     /* Kontrola poctu argumentu */
-    if(argc < 8){
+    if(argc < ARG_COUNT){
         help();
         exit(1);
     }
@@ -39,7 +42,11 @@ int main(int argc, char *argv[]){
     FILE *file_out = NULL;
     char path[STRING_LENGHT] = {0};
     char content[FILE_CHAR_COUNT] = {0};
+
+    /* Hash table experimenty */
     table_spam = table_create();
+
+    /* Konec experimentu */
 
     /* Kontrola argumentu */
     handle_input(argc, argv);
@@ -53,7 +60,7 @@ int main(int argc, char *argv[]){
     /* Nacteni spamu */
     for(i = 1; i <= spam_cnt; i++){
         /* Sestavení cesty k souboru */
-        sprintf(path, "%s%s%d%s", FILE_PATH, argv[1], i, FILE_EXTENSION);
+        sprintf(path, "%s%s%ld%s", FILE_PATH, argv[1], (unsigned long)i, FILE_EXTENSION);
 
         /* Otevre soubor */
         file_in = fopen(path, "r");
@@ -62,12 +69,13 @@ int main(int argc, char *argv[]){
             return EXIT_FAILURE;
         }
 
-        fprintf(file_out, "\n\n%d", i);
+        fprintf(file_out, "\n\n%ld", (unsigned long)i);
 
         /* Vypise obsah souboru */
         while (fgets(content, FILE_CHAR_COUNT, file_in)) {
             char *token = strtok(content, " ");
             while(token){
+                table_insert(table_spam, token, token);
                 fprintf(file_out, "%s ", token);
                 token = strtok(NULL, " ");
             }
@@ -80,7 +88,7 @@ int main(int argc, char *argv[]){
     /* Nacteni hamu */
     for(i = 1; i <= ham_cnt; i++){
         /* Sestaveni cesty k souboru */
-        sprintf(path, "%s%s%d%s", FILE_PATH, argv[3], i, FILE_EXTENSION);
+        sprintf(path, "%s%s%ld%s", FILE_PATH, argv[3], (unsigned long)i, FILE_EXTENSION);
 
         /* Otevre soubor */
         file_in = fopen(path, "r");
@@ -89,12 +97,13 @@ int main(int argc, char *argv[]){
             return EXIT_FAILURE;
         }
 
-        fprintf(file_out, "\n\n%d", i);
+        fprintf(file_out, "\n\n%ld", (unsigned long)i);
 
         /* Vypise obsah souboru */
         while (fgets(content, FILE_CHAR_COUNT, file_in)) {
             char *token = strtok(content, " ");
             while(token){
+                table_insert(table_spam, token, token);
                 fprintf(file_out, "%s ", token);
                 token = strtok(NULL, " ");
             }
@@ -105,6 +114,11 @@ int main(int argc, char *argv[]){
     }
     /* Uzavre vystupni soubor */
     fclose(file_out);
+
+
+    table_print(table_spam);
+    table_free(&table_spam);
+
 
     return EXIT_SUCCESS;
 }

@@ -1,6 +1,9 @@
 #ifndef PC_SEMESTRALKA_CONFIG_H
 #define PC_SEMESTRALKA_CONFIG_H
 
+/* Modifikator pro lokalni funkce */
+#define LOCAL static
+
 /* Pocet znaku v souboru */
 #define FILE_CHAR_COUNT 3191
 

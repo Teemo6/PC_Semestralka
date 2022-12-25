@@ -1,44 +1,29 @@
 #ifndef PC_SEMESTRALKA_HASH_TABLE_H
 #define PC_SEMESTRALKA_HASH_TABLE_H
 
-/* Velikost hash tabulky */
-#define TABLE_SIZE 1531
+#include "hash_table_entry.h"
 
-/* Prvocislo podle ktereho se dela hash funkce */
-#define HASH_PRIME 33
+/* Vychozi velikost hash_function tabulky */
+#define INIT_TABLE_SIZE 1531
 
-/* Prvek hash tabulky */
-typedef struct ENTRY {
-    char word[STRING_LENGHT];
-    double probability;
-} entry;
+/* Prvocislo podle ktereho se dela hash_function funkce */
+#define HASH_PRIME 13
 
 /* Hash tabulka */
 typedef struct HASH_TABLE {
-    entry *entries;
+    entry **entries;
+    size_t entry_count;
     size_t size;
 } hash_table;
 
-/* Iterator */
-typedef struct ITERATOR {
-    const char* key;
-    void* value;
-
-    hash_table* _table;
-    size_t _index;
-} iterator;
-
-
 hash_table *table_create(void);
 
-void table_destroy(hash_table *table);
+void table_free(hash_table **table);
 
-void *table_get(hash_table *table, const char *key);
+void table_print(const hash_table *table);
 
-const char *table_set(hash_table *table, const char *key, void *value);
+void table_insert(hash_table *table, const char *key, const char *value);
 
-iterator table_iterator(hash_table *table);
-
-int table_has_next(iterator *it);
+void table_get(hash_table *table, const char *key);
 
 #endif
