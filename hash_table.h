@@ -4,7 +4,7 @@
 #include "hash_table_entry.h"
 
 /* Vychozi velikost hash_function tabulky */
-#define INIT_TABLE_SIZE 1531
+#define INIT_TABLE_SIZE 1511
 
 /* Prvocislo podle ktereho se dela hash_function funkce */
 #define HASH_PRIME 13

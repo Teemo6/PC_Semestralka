@@ -5,8 +5,13 @@
 #include "config.h"
 #include "hash_table.h"
 
-LOCAL size_t hash_function(const char *word){
-    size_t i, hash, word_len;
+LOCAL int hash_function(const char *word){
+    size_t i, word_len;
+    int hash;
+
+    if(!word){
+        return -1;
+    }
 
     word_len = strnlen(word, STRING_LENGHT);
     hash = 0;
@@ -25,11 +30,10 @@ hash_table *table_create(void){
     size_t i;
     hash_table *table;
 
-    /* Alokace pameti hash_function table */
+    /* Alokace pameti hash table */
     table = (hash_table *)malloc(sizeof(hash_table));
-    if (!table){
-        return NULL;
-    }
+    if (!table) return NULL;
+
     table->size = INIT_TABLE_SIZE;
     table->entry_count = 0;
 
@@ -44,7 +48,6 @@ hash_table *table_create(void){
     for(i = 0; i < table->size; i++){
         table->entries[i] = NULL;
     }
-
     return table;
 }
 
@@ -85,12 +88,18 @@ void table_print(const hash_table *table){
 
 void table_insert(hash_table *table, const char *key, const char *value){
     entry *e_new, *e_table;
-    size_t index;
+    int index;
 
     if(!table || !key){
         return;
     }
+
+    /* Prazdne slovo */
     index = hash_function(key);
+    if(index == -1){
+        return;
+    }
+
     e_table = table->entries[index];
     e_new = entry_create(key, value);
 
@@ -98,6 +107,7 @@ void table_insert(hash_table *table, const char *key, const char *value){
         return;
     }
 
+    /* Prvek se v tabulce nenachazi */
     if(e_table == NULL){
         /* V tabulce doslo misto */
         if(table->entry_count >= table->size){
@@ -112,11 +122,14 @@ void table_insert(hash_table *table, const char *key, const char *value){
     } else {
         /* Hodnoty klice jsou stejne */
         if(!strncmp(e_table->key, key, STRING_LENGHT)){
-            /* Uprava hodnoty */
-            strncpy(table->entries[index]->value, value, STRING_LENGHT);
+            /* Zmena prvku na novy */
+            entry_free(&table->entries[index]);
+            table->entries[index] = e_new;
         } else {
-            /* Vyreseni kolize */
+            /* Vyreseni kolize na stejnem indexu */
+            printf("\n\nKolize\n");
             handle_collision(table, index, e_new);
+            entry_free(&e_new);
         }
     }
 }

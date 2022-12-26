@@ -119,7 +119,6 @@ int main(int argc, char *argv[]){
     /* Uzavre vystupni soubor */
     fclose(file_out);
 
-
     table_print(table_spam);
     table_free(&table_spam);
 

@@ -35,6 +35,12 @@ void entry_free(entry **e){
     *e = NULL;
 }
 
+void entry_print(const entry *e){
+    if(!e) return;
+
+    printf("%s\t->\t%s\n", e->key, e->value);
+}
+
 entry_list *entry_list_create(const entry *e){
     entry_list *e_list_new;
 

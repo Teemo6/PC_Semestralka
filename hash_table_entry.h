@@ -15,6 +15,7 @@ typedef struct ENTRY_LIST{
 
 entry *entry_create(const char *key, const char *value);
 void entry_free(entry **e);
+void entry_print(const entry *e);
 
 entry_list *entry_list_create(const entry *e);
 void entry_list_free(entry_list **e_list);
