@@ -11,7 +11,7 @@
 #define STRING_LENGHT 256
 
 /* Cesta k souborům */
-#define FILE_PATH "../data/test/"
+#define FILE_PATH "data/test/"
 
 /* Přípona souboru */
 #define FILE_EXTENSION ".txt"

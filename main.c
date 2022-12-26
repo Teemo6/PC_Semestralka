@@ -37,6 +37,8 @@ int main(int argc, char *argv[]){
     size_t spam_cnt, ham_cnt;
     size_t i;
     hash_table *table_spam;
+    entry_list *entry_list;
+    entry *e1, *e2, *e3;
 
     FILE *file_in = NULL;
     FILE *file_out = NULL;
@@ -65,6 +67,7 @@ int main(int argc, char *argv[]){
         /* Otevre soubor */
         file_in = fopen(path, "r");
         if (!file_in) {
+            printf("\nCesta:\t%s", path);
             printf("\nNemohu otevrit soubor, ukoncuji program.\n");
             return EXIT_FAILURE;
         }
@@ -93,6 +96,7 @@ int main(int argc, char *argv[]){
         /* Otevre soubor */
         file_in = fopen(path, "r");
         if (!file_in) {
+            printf("\nCesta:\t%s", path);
             printf("\nNemohu otevrit soubor, ukoncuji program.\n");
             return EXIT_FAILURE;
         }
@@ -118,6 +122,8 @@ int main(int argc, char *argv[]){
 
     table_print(table_spam);
     table_free(&table_spam);
+
+
 
 
     return EXIT_SUCCESS;
