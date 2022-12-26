@@ -42,43 +42,44 @@ void entry_print(const entry *e){
 }
 
 entry_list *entry_list_create(const entry *e){
-    entry_list *e_list_new;
+    entry_list *e_new;
 
-    e_list_new = (entry_list *)malloc(sizeof(entry_list));
-    if(!e_list_new){
+    e_new = (entry_list *)malloc(sizeof(entry_list));
+    if(!e_new){
         return NULL;
     }
-    e_list_new->current = (entry *)malloc(sizeof(entry));
-    e_list_new->next = (entry_list *)malloc(sizeof(entry_list));
+    e_new->entry = (entry *)malloc(sizeof(entry));
 
-    if(!e_list_new->current || !e_list_new->next){
-        free(e_list_new);
+    if(!e_new->entry){
+        free(e_new);
         return NULL;
     }
 
-    e_list_new->current = e;
-    e_list_new->next = NULL;
+    e_new->entry = e;
+    e_new->next = NULL;
 
-    return e_list_new;
+    return e_new;
 }
 
 void entry_list_free(entry_list **e_list){
-    entry_list *e_next;
+    entry_list *e_next, *e_last;
 
     if(!e_list || !*e_list){
         return;
     }
 
-    e_next = (**e_list).next;
-    while(e_next) {
-        e_next = (**e_list).next;
+    e_last = (*e_list);
+    e_next = (*e_list)->next;
+    while(e_next){
+        entry_free(&e_last->entry);
+        free(e_last);
 
-        entry_free(&(**e_list).current);
-
-        free((**e_list).current);
-        free((**e_list).next);
+        e_last = e_next;
+        e_next = e_next->next;
     }
-    free(*e_list);
+    entry_free(&e_last->entry);
+    free(e_last);
+
     *e_list = NULL;
 }
 
@@ -89,28 +90,35 @@ void entry_list_print(const entry_list *e_list){
         return;
     }
 
-    printf("%s\t\t", e_list->current->value);
+    printf("%s  ->  ", e_list->entry->value);
 
     e_next = e_list->next;
-    while(e_next) {
-        printf("%s\t\t", e_next->current->value);
-        e_next = e_list->next;
+    while(e_next){
+        printf("%s  ->  ", e_next->entry->value);
+        e_next = e_next->next;
     }
-    printf("\n");
+    printf("NULL\n");
 }
 
 void entry_list_insert(const entry_list *e_list, const entry *e){
-    entry_list *e_list_next, *e_list_last;
+    entry_list *e_next, *e_last;
 
     if(!e_list || !e){
         return;
     }
 
-    e_list_next = e_list->next;
-    while(e_list_next){
-        e_list_last = e_list_next;
-        e_list_next = e_list->next;
+    e_last = e_list;
+    e_next = e_list->next;
+    while(e_next){
+        e_last = e_next;
+        e_next = e_next->next;
     }
 
-    e_list_last->next = entry_list_create(e);
+    e_last->next = (entry_list *)malloc(sizeof(entry_list));
+
+    if(!e_last->next){
+        return;
+    }
+
+    e_last->next = entry_list_create(e);
 }

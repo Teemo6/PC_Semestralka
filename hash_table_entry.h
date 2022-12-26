@@ -9,7 +9,7 @@ typedef struct ENTRY{
 
 /* Prvek hash tabulky */
 typedef struct ENTRY_LIST{
-    entry *current;
+    entry *entry;
     struct ENTRY_LIST *next;
 } entry_list;
 

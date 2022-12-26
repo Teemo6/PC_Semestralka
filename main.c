@@ -122,8 +122,12 @@ int main(int argc, char *argv[]){
     table_print(table_spam);
     table_free(&table_spam);
 
+    entry_list = entry_list_create(entry_create("a", "a"));
+    entry_list_insert(entry_list, entry_create("b", "b"));
+    entry_list_insert(entry_list, entry_create("c", "c"));
 
-
+    entry_list_print(entry_list);
+    entry_list_free(&entry_list);
 
     return EXIT_SUCCESS;
 }

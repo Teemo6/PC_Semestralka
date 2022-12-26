@@ -13,7 +13,7 @@ LOCAL int hash_function(const char *word){
         return -1;
     }
 
-    word_len = strnlen(word, STRING_LENGHT);
+    word_len = strlen(word);
     hash = 0;
 
     for(i = 0; i < word_len; i++){
