@@ -4,16 +4,11 @@
 /* Modifikator pro lokalni funkce */
 #define LOCAL static
 
-/* Pocet znaku v souboru */
-#define FILE_CHAR_COUNT 3191
-
 /* Maximalni velikost slova */
 #define STRING_LENGHT 256
 
-/* Cesta k souborům */
-#define FILE_PATH "../data/test/"
-
-/* Přípona souboru */
-#define FILE_EXTENSION ".txt"
+/* Označení načteného souboru */
+#define FLAG_SPAM 1
+#define FLAG_HAM 2
 
 #endif

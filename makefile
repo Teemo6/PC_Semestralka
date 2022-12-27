@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall -Wextra -ansi -pedantic
-OBJ=main.o hash_table.o hash_table_entry.o
+OBJ=main.o hash_table.o hash_table_entry.o loader.o
 BIN=spamid.exe
 
 $(BIN): $(OBJ)

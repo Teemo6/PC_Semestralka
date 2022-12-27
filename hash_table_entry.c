@@ -5,7 +5,19 @@
 #include "config.h"
 #include "hash_table_entry.h"
 
-entry *entry_create(const char *key, const char *value){
+/**
+ * @brief Uvolní jednu položku.
+ * @param e položka k uvolnění
+ */
+LOCAL void entry_free_single(entry **e){
+    if(!e || !*e) return;
+
+    free((*e)->key);
+    free(*e);
+    *e = NULL;
+}
+
+entry *entry_create(const char *key){
     entry *e_new;
 
     e_new = (entry *)malloc(sizeof(entry));
@@ -13,74 +25,110 @@ entry *entry_create(const char *key, const char *value){
         return NULL;
     }
     e_new->key = (char *)malloc(STRING_LENGHT);
-    e_new->value = (char *)malloc(STRING_LENGHT);
 
-    if(!e_new->key || !e_new->value){
+    if(!e_new->key){
         free(e_new);
         return NULL;
     }
 
     strncpy(e_new->key, key, STRING_LENGHT);
-    strncpy(e_new->value, value, STRING_LENGHT);
-    e_new->count = 1;
+    e_new->spam_count = 0;
+    e_new->ham_count = 0;
+    e_new->spam_prob = 0;
+    e_new->ham_prob = 0;
     e_new->next = NULL;
 
     return e_new;
 }
 
-void entry_free(entry **e){
-    if(!e || !*e) return;
+void entry_free(entry **head){
+    if(!head || !*head) return;
 
-    if((*e)->next != NULL) {
-        entry_free(&(*e)->next);
-        free((*e)->next);
-    }
+    if((*head)->next != NULL) entry_free(&(*head)->next);
 
-    free((*e)->key);
-    free((*e)->value);
-    free(*e);
-    *e = NULL;
+    entry_free_single(head);
 }
 
-void entry_print(const entry *e){
-    entry *e_next;
-
+void entry_print_single(const entry *e){
     if(!e) return;
 
-    printf("%s  ->  ", e->value);
-
-    e_next = e->next;
-    while(e_next){
-        printf("%s  ->  ", e_next->value);
-        e_next = e_next->next;
-    }
-    printf("NULL\n");
+    printf("[Key: %s, SC: %ld, HC: %ld]", e->key, (unsigned long)e->spam_count, (unsigned long)e->ham_count);
 }
 
-void entry_add(entry *e, const char *key, char *value){
+void entry_print(entry *head){
     entry *e_next, *e_last;
 
-    if(!e || !key || !value){
+    if(!head){
         return;
     }
 
-    if(!strncmp(e->key, key, STRING_LENGHT)) {
-        strncpy(e->value, value, STRING_LENGHT);
-        e->count++;
-        return;
-    }
-
-    e_last = e;
-    e_next = e->next;
+    e_last = head;
+    e_next = head->next;
     while(e_next){
-        if(!strncmp(e_last->key, key, STRING_LENGHT)) {
-            strncpy(e->value, value, STRING_LENGHT);
-            e_last->count++;
-            return;
+        entry_print_single(e_last);
+        printf("  ->  ");
+        e_last = e_next;
+        e_next = e_next->next;
+    }
+
+    entry_print_single(e_last);
+    printf("  ->  NULL\n");
+}
+
+int entry_insert(entry *head, entry *e_new){
+    entry *e_next, *e_last;
+
+    if(!head || !e_new){
+        return 0;
+    }
+
+    e_last = head;
+    e_next = head->next;
+    while(e_next){
+        /* Stejny klic, prepsani polozky */
+        if(!strncmp(e_last->key, e_new->key, STRING_LENGHT)) {
+            e_last->spam_count += e_new->spam_count;
+            e_last->ham_count += e_new->ham_count;
+            entry_free_single(&e_new);
+            return 2;
         }
         e_last = e_next;
         e_next = e_next->next;
     }
 
-    e_last->next = entry_create(key, value);
+    /* Stejny klic, prepsani polozky */
+    if(!strncmp(e_last->key, e_new->key, STRING_LENGHT)) {
+        e_last->spam_count += e_new->spam_count;
+        e_last->ham_count += e_new->ham_count;
+        entry_free_single(&e_new);
+        return 2;
+    }
+
+    /* Nastaveni next na novou polozku */
+    e_last->next = e_new;
+    return 1;
+}
+
+entry *entry_find(entry *head, const char *key){
+    entry *e_last, *e_next;
+
+    if(!head || !key){
+        return NULL;
+    }
+
+    e_last = head;
+    e_next = head->next;
+    while(e_next){
+        if(!strncmp(e_last->key, key, STRING_LENGHT)) {
+            return e_last;
+        }
+        e_last = e_next;
+        e_next = e_next->next;
+    }
+
+    if(!strncmp(e_last->key, key, STRING_LENGHT)) {
+        return e_last;
+    }
+
+    return NULL;
 }
