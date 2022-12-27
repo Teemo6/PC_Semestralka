@@ -65,7 +65,7 @@ void table_free(hash_table **table){
         }
     }
 
-    free((**table).entries);
+    free((*table)->entries);
     free(*table);
     *table = NULL;
 }

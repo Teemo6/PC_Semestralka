@@ -22,6 +22,8 @@ entry *entry_create(const char *key, const char *value){
 
     strncpy(e_new->key, key, STRING_LENGHT);
     strncpy(e_new->value, value, STRING_LENGHT);
+    e_new->count = 1;
+    e_new->next = NULL;
 
     return e_new;
 }
@@ -29,96 +31,56 @@ entry *entry_create(const char *key, const char *value){
 void entry_free(entry **e){
     if(!e || !*e) return;
 
-    free((**e).key);
-    free((**e).value);
+    if((*e)->next != NULL) {
+        entry_free(&(*e)->next);
+        free((*e)->next);
+    }
+
+    free((*e)->key);
+    free((*e)->value);
     free(*e);
     *e = NULL;
 }
 
 void entry_print(const entry *e){
+    entry *e_next;
+
     if(!e) return;
 
-    printf("%s\t->\t%s\n", e->key, e->value);
-}
+    printf("%s  ->  ", e->value);
 
-entry_list *entry_list_create(const entry *e){
-    entry_list *e_new;
-
-    e_new = (entry_list *)malloc(sizeof(entry_list));
-    if(!e_new){
-        return NULL;
-    }
-    e_new->entry = (entry *)malloc(sizeof(entry));
-
-    if(!e_new->entry){
-        free(e_new);
-        return NULL;
-    }
-
-    e_new->entry = e;
-    e_new->next = NULL;
-
-    return e_new;
-}
-
-void entry_list_free(entry_list **e_list){
-    entry_list *e_next, *e_last;
-
-    if(!e_list || !*e_list){
-        return;
-    }
-
-    e_last = (*e_list);
-    e_next = (*e_list)->next;
+    e_next = e->next;
     while(e_next){
-        entry_free(&e_last->entry);
-        free(e_last);
-
-        e_last = e_next;
-        e_next = e_next->next;
-    }
-    entry_free(&e_last->entry);
-    free(e_last);
-
-    *e_list = NULL;
-}
-
-void entry_list_print(const entry_list *e_list){
-    entry_list *e_next;
-
-    if(!e_list){
-        return;
-    }
-
-    printf("%s  ->  ", e_list->entry->value);
-
-    e_next = e_list->next;
-    while(e_next){
-        printf("%s  ->  ", e_next->entry->value);
+        printf("%s  ->  ", e_next->value);
         e_next = e_next->next;
     }
     printf("NULL\n");
 }
 
-void entry_list_insert(const entry_list *e_list, const entry *e){
-    entry_list *e_next, *e_last;
+void entry_add(entry *e, const char *key, char *value){
+    entry *e_next, *e_last;
 
-    if(!e_list || !e){
+    if(!e || !key || !value){
         return;
     }
 
-    e_last = e_list;
-    e_next = e_list->next;
+    if(!strncmp(e->key, key, STRING_LENGHT)) {
+        strncpy(e->value, value, STRING_LENGHT);
+        e->count++;
+        return;
+    }
+
+    e_last = e;
+    e_next = e->next;
     while(e_next){
+        if(!strncmp(e_last->key, key, STRING_LENGHT)) {
+            strncpy(e->value, value, STRING_LENGHT);
+            e_last->count++;
+            return;
+        }
         e_last = e_next;
         e_next = e_next->next;
     }
 
-    e_last->next = (entry_list *)malloc(sizeof(entry_list));
-
-    if(!e_last->next){
-        return;
-    }
-
-    e_last->next = entry_list_create(e);
+    e_last->next = entry_create(key, value);
 }

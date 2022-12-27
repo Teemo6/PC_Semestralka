@@ -37,8 +37,6 @@ int main(int argc, char *argv[]){
     size_t spam_cnt, ham_cnt;
     size_t i;
     hash_table *table_spam;
-    entry_list *entry_list;
-    entry *e1, *e2, *e3;
 
     FILE *file_in = NULL;
     FILE *file_out = NULL;
@@ -122,12 +120,21 @@ int main(int argc, char *argv[]){
     table_print(table_spam);
     table_free(&table_spam);
 
-    entry_list = entry_list_create(entry_create("a", "a"));
-    entry_list_insert(entry_list, entry_create("b", "b"));
-    entry_list_insert(entry_list, entry_create("c", "c"));
+    entry *e1, *e2;
 
-    entry_list_print(entry_list);
-    entry_list_free(&entry_list);
+    e1 = entry_create("asdasdasd", "a");
+    e2 = entry_create("b", "b");
+
+    entry_add(e1, "asdasdasd", "cau");
+    entry_add(e1, "asdasdad", "ahoj");
+    entry_add(e1, "asdasdasd", "xd");
+
+    entry_print(e1);
+
+    entry_free(&e1);
+    entry_free(&e2);
+
+
 
     return EXIT_SUCCESS;
 }
