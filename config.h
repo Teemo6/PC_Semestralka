@@ -7,8 +7,9 @@
 /* Maximalni velikost slova */
 #define STRING_LENGHT 256
 
-/* Označení načteného souboru */
+/* Oznacení nacitaneho souboru */
 #define FLAG_SPAM 1
-#define FLAG_HAM 2
+#define FLAG_HAM  2
+#define FLAG_TEST 3
 
 #endif

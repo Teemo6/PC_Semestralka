@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "config.h"
+#include "error.h"
 #include "hash_table.h"
 #include "loader.h"
 
@@ -10,27 +11,20 @@
 #define ARG_COUNT 8
 
 /* Vyznam jednotlivych argumentu */
-#define ARG_SPAM_NAME   argv[1]
-#define ARG_SPAM_COUNT  argv[2]
-#define ARG_HAM_NAME    argv[3]
-#define ARG_HAM_COUNT   argv[4]
-#define ARG_TEST_NAME   argv[5]
-#define ARG_TEST_COUNT  argv[6]
-#define ARG_OUTPUT      argv[7]
-
-
-void help(void){
-    printf("Usage:\n\tspamid.exe <spam> <spam-cnt> <ham> <ham-cnt> <test> <test-cnt> <out-file>\n\n");
-    printf("Example:\n\tspamid.exe spam 10 ham 20 test 50 result.txt\n\n");
-}
+#define ARG_SPAM_PATTERN    argv[1]
+#define ARG_SPAM_COUNT      argv[2]
+#define ARG_HAM_PATTERN     argv[3]
+#define ARG_HAM_COUNT       argv[4]
+#define ARG_TEST_PATTERN    argv[5]
+#define ARG_TEST_COUNT      argv[6]
+#define ARG_OUTPUT          argv[7]
 
 void handle_input(int argc, char *argv[]){
     long spam_cnt, ham_cnt, test_cnt;
 
     /* Kontrola poctu argumentu */
-    if(argc < ARG_COUNT){
-        help();
-        exit(1);
+    if(argc != ARG_COUNT){
+        error_arg();
     }
 
     /* Kontrola intervalu cisel <1; N> */
@@ -39,8 +33,7 @@ void handle_input(int argc, char *argv[]){
     test_cnt = strtol(ARG_TEST_COUNT, NULL, 0);
 
     if(!spam_cnt || !ham_cnt || !test_cnt){
-        help();
-        exit(1);
+        error_arg();
     }
 }
 
@@ -51,7 +44,7 @@ int main(int argc, char *argv[]){
     /* Kontrola argumentu */
     handle_input(argc, argv);
 
-    /* Hash table*/
+    /* Hash table */
     bayes_hash_table = table_create();
 
     /* Prevod cisel na int */
@@ -59,8 +52,8 @@ int main(int argc, char *argv[]){
     ham_cnt = strtol(ARG_HAM_COUNT, NULL, 0);
 
     /* Nacteni souboru */
-    load_file(bayes_hash_table, ARG_SPAM_NAME, &spam_cnt, FLAG_SPAM);
-    load_file(bayes_hash_table, ARG_HAM_NAME, &ham_cnt, FLAG_HAM);
+    load_files(bayes_hash_table, ARG_SPAM_PATTERN, &spam_cnt, FLAG_SPAM);
+    load_files(bayes_hash_table, ARG_HAM_PATTERN, &ham_cnt, FLAG_HAM);
 
     table_print(bayes_hash_table);
     table_free(&bayes_hash_table);

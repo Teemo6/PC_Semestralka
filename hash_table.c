@@ -5,19 +5,25 @@
 #include "config.h"
 #include "hash_table.h"
 
-LOCAL int hash_function(const char *word){
+/**
+ * @brief Hashovací funkce tabulky.
+ * @param key klíč k hashování
+ * @return -1  Chyba\n
+ *         int Hash klíče
+ */
+LOCAL int hash_function(const char *key){
     size_t i, word_len;
     int hash;
 
-    if(!word){
+    if(!key){
         return -1;
     }
 
-    word_len = strlen(word);
+    word_len = strlen(key);
     hash = 0;
 
     for(i = 0; i < word_len; i++){
-        hash = ((hash * HASH_PRIME) + word[i]) % TABLE_SIZE;
+        hash = ((hash * HASH_PRIME) + key[i]) % TABLE_SIZE;
     }
     return hash;
 }
@@ -82,9 +88,9 @@ void table_print(const hash_table *table){
         }
     }
     printf("------------------------------\n");
-    printf("Pocet vsech slov:\t%lu\n", (unsigned long)table->entry_count);
-    printf("Pocet slov spamu:\t%lu\n", (unsigned long)table->spam_count);
-    printf("Pocet slov hamu:\t%lu\n", (unsigned long)table->ham_count);
+    printf("Entry count:\t%lu\n", (unsigned long)table->entry_count);
+    printf("Spam count:\t%lu\n", (unsigned long)table->spam_count);
+    printf("Ham count:\t%lu\n", (unsigned long)table->ham_count);
     printf("------------------------------\n");
 }
 

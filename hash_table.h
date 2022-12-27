@@ -3,10 +3,10 @@
 
 #include "hash_table_entry.h"
 
-/* Vychozi velikost hash_function tabulky */
+/* Velikost Hash tabulky */
 #define TABLE_SIZE 26489
 
-/* Prvocislo podle ktereho se dela hash_function funkce */
+/* Prvocislo podle ktereho se dela hash funkce */
 #define HASH_PRIME 13
 
 /* Hash tabulka */

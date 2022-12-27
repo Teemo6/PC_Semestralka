@@ -3,8 +3,9 @@
 #include <string.h>
 
 #include "loader.h"
+#include "error.h"
 
-int load_file(hash_table *table, const char *spam_pattern, const size_t *spam_count, int flag){
+void load_files(hash_table *table, const char *spam_pattern, const size_t *spam_count, int flag){
     size_t i;
 
     FILE *file = NULL;
@@ -13,15 +14,14 @@ int load_file(hash_table *table, const char *spam_pattern, const size_t *spam_co
 
     /* Nacteni vsech souboru */
     for(i = 1; i <= (*spam_count); i++){
-        /* Sestavení cesty k souboru */
+        /* Sestaveni cesty k souboru */
         sprintf(path, "%s%s%ld%s", FILE_PATH, spam_pattern, (unsigned long)i, FILE_EXTENSION);
 
         /* Otevre soubor */
         file = fopen(path, "r");
         if (!file) {
-            printf("\nCesta:\t%s", path);
-            printf("\nNemohu otevrit soubor, ukoncuji program.\n");
-            return EXIT_FAILURE;
+            table_free(&table);
+            error_fopen(path);
         }
 
         /* Vypise obsah souboru */
@@ -32,9 +32,8 @@ int load_file(hash_table *table, const char *spam_pattern, const size_t *spam_co
         /* Uzavre soubor */
         fclose(file);
     }
-    return EXIT_SUCCESS;
 }
 
-int output_file(hash_table *table, const char *out_file){
+void output_file(hash_table *table, const char *out_file){
     FILE *file_out = NULL;
 }
