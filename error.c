@@ -16,3 +16,9 @@ void error_fopen(char *path){
     printf("File path: %s\n", path);
     exit(1);
 }
+
+void error_probabilty(void){
+    printf("\n");
+    printf("ERROR: Unable to compute probabilites.\n");
+    exit(1);
+}

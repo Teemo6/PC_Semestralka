@@ -1,13 +1,13 @@
 CC=gcc
 CFLAGS=-Wall -Wextra -ansi -pedantic
-OBJ=main.o hash_table.o hash_table_entry.o loader.o error.o
 BIN=spamid.exe
+OBJ=main.o error.o hash_table.o hash_table_entry.o loader.o classifier.o
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
 
 $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ -lm
-
-.c.o:
-	$(CC) $(CFLAGS) -c $^
 
 clean :
 	rm $(BIN) $(OBJ)

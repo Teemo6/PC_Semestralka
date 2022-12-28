@@ -52,7 +52,7 @@ void entry_free(entry **head){
 void entry_print_single(const entry *e){
     if(!e) return;
 
-    printf("[Key: %s, SC: %ld, HC: %ld]", e->key, (unsigned long)e->spam_count, (unsigned long)e->ham_count);
+    printf("[Key: %s, SC: %ld, HC: %ld, SP: %.4f, HP: %.4f]", e->key, (unsigned long)e->spam_count, (unsigned long)e->ham_count, e->spam_prob, e->ham_prob);
 }
 
 void entry_print(entry *head){

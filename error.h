@@ -12,4 +12,9 @@ void error_arg(void);
  */
 void error_fopen(char *path);
 
+/**
+ * @brief Ukončí běh programu. Vypíše chybovou hlášku.
+ */
+void error_probabilty(void);
+
 #endif
