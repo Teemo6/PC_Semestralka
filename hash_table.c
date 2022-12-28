@@ -37,9 +37,12 @@ hash_table *table_create(void){
     if (!table) return NULL;
 
     table->size = TABLE_SIZE;
-    table->entry_count = 0;
-    table->spam_count = 0;
-    table->ham_count = 0;
+    table->count = 0;
+    table->count_spam = 0;
+    table->count_ham = 0;
+    table->unique = 0;
+    table->unique_spam = 0;
+    table->unique_ham = 0;
 
     /* Alokace pameti prvku */
     table->entries = (entry **)calloc(table->size, sizeof(entry *));
@@ -88,15 +91,18 @@ void table_print(const hash_table *table){
         }
     }
     printf("------------------------------\n");
-    printf("Entry count:\t%lu\n", (unsigned long)table->entry_count);
-    printf("Spam count:\t%lu\n", (unsigned long)table->spam_count);
-    printf("Ham count:\t%lu\n", (unsigned long)table->ham_count);
+    printf("Common entry count:\t%lu\n", (unsigned long)table->count);
+    printf("Common spam count:\t%lu\n", (unsigned long)table->count_spam);
+    printf("Common ham count:\t%lu\n\n", (unsigned long)table->count_ham);
+    printf("Unique entry count:\t%lu\n", (unsigned long)table->unique);
+    printf("Unique spam count:\t%lu\n", (unsigned long)table->unique_spam);
+    printf("Unique ham count:\t%lu\n", (unsigned long)table->unique_ham);
     printf("------------------------------\n");
 }
 
 int table_insert(hash_table *table, const char *key, int flag){
     entry *e_new, *e_table;
-    int index;
+    int index, result;
 
     if(!table || !key){
         return 0;
@@ -118,23 +124,46 @@ int table_insert(hash_table *table, const char *key, int flag){
     /* Pocitadla */
     if(flag == FLAG_SPAM){
         e_new->spam_count++;
-        table->spam_count++;
+        table->count_spam++;
     }
 
     if(flag == FLAG_HAM){
         e_new->ham_count++;
-        table->ham_count++;
+        table->count_ham++;
     }
-    table->entry_count++;
+    table->count++;
 
     /* Prvek v tabulce neni */
     if(e_table == NULL){
         table->entries[index] = e_new;
+
+        if(flag == FLAG_SPAM){
+            table->unique_spam++;
+        }
+        if(flag == FLAG_HAM){
+            table->unique_ham++;
+        }
+        table->unique++;
+
         return 1;
     }
 
     /* V tabulce uz je nejaky prvek, kolize */
-    return entry_insert(e_table, e_new);
+    result = entry_insert(e_table, e_new);
+    if(result == 1){
+        if(flag == FLAG_SPAM){
+            table->unique_spam++;
+        }
+        if(flag == FLAG_HAM){
+            table->unique_ham++;
+        }
+        table->unique++;
+    }
+
+    if(result == 3){
+        table->unique_ham++;
+    }
+    return result;
 }
 
 entry *table_find(hash_table *table, const char *key){

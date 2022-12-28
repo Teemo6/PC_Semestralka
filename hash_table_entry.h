@@ -42,6 +42,7 @@ void entry_print(entry *head);
  * @return 0 Chyba.\n
  *         1 Úspěšné vložení.\n
  *         2 Úspěšné přepšání.
+ *         3 Úspěšné přepšání, byl vložen nový ham.
  */
 int entry_insert(entry *head, entry *e_new);
 

@@ -16,13 +16,14 @@ void compute_probability(hash_table *table){
             e_last = table->entries[i];
             e_next = e_last->next;
             while(e_next){
-                e_last->spam_prob = (double)e_last->spam_count / (double)table->entry_count;
-                e_last->ham_prob = (double)e_last->ham_count / (double)table->entry_count;
+                /* P(<word>|c) */
+                e_last->spam_prob = ((double)e_last->spam_count + 1) / ((double)table->count + (double)table->unique_spam);
+                e_last->ham_prob = ((double)e_last->ham_count + 1) / ((double)table->count + (double)table->unique_ham);
                 e_last = e_next;
                 e_next = e_next->next;
             }
-            e_last->spam_prob = (double)e_last->spam_count / (double)table->entry_count;
-            e_last->ham_prob = (double)e_last->ham_count / (double)table->entry_count;
+            e_last->spam_prob = ((double)e_last->spam_count + 1) / ((double)table->count + (double)table->unique_spam);
+            e_last->ham_prob = ((double)e_last->ham_count + 1) / ((double)table->count + (double)table->unique_ham);
         }
     }
 }

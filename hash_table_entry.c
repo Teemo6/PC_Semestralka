@@ -90,6 +90,10 @@ int entry_insert(entry *head, entry *e_new){
             e_last->spam_count += e_new->spam_count;
             e_last->ham_count += e_new->ham_count;
             entry_free_single(&e_new);
+
+            if(e_last->ham_count == 1){
+                return 3;
+            }
             return 2;
         }
         e_last = e_next;
@@ -101,6 +105,10 @@ int entry_insert(entry *head, entry *e_new){
         e_last->spam_count += e_new->spam_count;
         e_last->ham_count += e_new->ham_count;
         entry_free_single(&e_new);
+
+        if(e_last->ham_count == 1){
+            return 3;
+        }
         return 2;
     }
 

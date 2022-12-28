@@ -12,9 +12,12 @@
 /* Hash tabulka */
 typedef struct HASH_TABLE {
     entry **entries;
-    size_t entry_count;
-    size_t spam_count;
-    size_t ham_count;
+    size_t count;
+    size_t count_spam;
+    size_t count_ham;
+    size_t unique;
+    size_t unique_spam;
+    size_t unique_ham;
     size_t size;
 } hash_table;
 
