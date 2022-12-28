@@ -19,8 +19,14 @@
 #define ARG_TEST_COUNT      argv[6]
 #define ARG_OUTPUT          argv[7]
 
+/**
+ * @brief Zkontroluje argumenty programu.
+ *        Při jakékoliv chybě ukončí program.
+ * @param argc počet argumentů
+ * @param argv argumenty
+ */
 void handle_input(int argc, char *argv[]){
-    long spam_cnt, ham_cnt, test_cnt;
+    size_t spam_cnt, ham_cnt, test_cnt;
 
     /* Kontrola poctu argumentu */
     if(argc != ARG_COUNT){
@@ -39,13 +45,16 @@ void handle_input(int argc, char *argv[]){
 
 int main(int argc, char *argv[]){
     size_t spam_cnt, ham_cnt, test_cnt;
-    hash_table *bayes_hash_table;
+    hash_table *bayes_table;
 
     /* Kontrola argumentu */
     handle_input(argc, argv);
 
     /* Hash table */
-    bayes_hash_table = table_create();
+    bayes_table = table_create();
+    if(!bayes_table){
+        error_table();
+    }
 
     /* Prevod cisel na int */
     spam_cnt = strtol(ARG_SPAM_COUNT, NULL, 0);
@@ -53,17 +62,19 @@ int main(int argc, char *argv[]){
     test_cnt = strtol(ARG_TEST_COUNT, NULL, 0);
 
     /* Nacteni souboru */
-    load_train(bayes_hash_table, ARG_SPAM_PATTERN, &spam_cnt, FLAG_SPAM);
-    load_train(bayes_hash_table, ARG_HAM_PATTERN, &ham_cnt, FLAG_HAM);
+    load_train(bayes_table, ARG_SPAM_PATTERN, &spam_cnt, FLAG_SPAM);
+    load_train(bayes_table, ARG_HAM_PATTERN, &ham_cnt, FLAG_HAM);
 
-    /* Vypocet pravdepodobnosti */
-    compute_probability(bayes_hash_table);
+    /* Vypocet pravdepodobnosti spamu, hamu */
+    compute_probability(bayes_table);
 
     /* Nacteni testu a vystup programu */
-    load_test(bayes_hash_table, ARG_OUTPUT, ARG_TEST_PATTERN, &test_cnt);
+    load_test(bayes_table, ARG_OUTPUT, ARG_TEST_PATTERN, &test_cnt);
+
+    table_print(bayes_table);
 
     /* Uvolneni tabulky */
-    table_free(&bayes_hash_table);
+    table_free(&bayes_table);
 
     return EXIT_SUCCESS;
 }

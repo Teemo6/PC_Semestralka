@@ -10,9 +10,15 @@ void error_arg(void){
     exit(1);
 }
 
+void error_table(void){
+    printf("\n");
+    printf("ERROR: Could not create hash table.\n");
+    exit(1);
+}
+
 void error_fopen(char *path){
     printf("\n");
-    printf("ERROR: Cannot open file.\n");
+    printf("ERROR: Could not open file.\n");
     printf("File path: %s\n", path);
     exit(1);
 }

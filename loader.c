@@ -67,12 +67,12 @@ void load_test(hash_table *table, const char *out_file, const char *test_pattern
 
             if(!e) continue;
 
-            if(e->spam_prob != 0){
-                spam_prob += log10(e->spam_prob);
+            if(e->prob_entry_spam != 0){
+                spam_prob += log10(e->prob_entry_spam);
             }
 
-            if(e->ham_prob != 0){
-                ham_prob += log10(e->ham_prob);
+            if(e->prob_entry_ham != 0){
+                ham_prob += log10(e->prob_entry_ham);
             }
         }
 

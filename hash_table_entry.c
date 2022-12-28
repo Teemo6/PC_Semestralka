@@ -5,7 +5,7 @@
 #include "config.h"
 #include "hash_table_entry.h"
 
-/**
+/*
  * @brief Uvolní jednu položku.
  * @param e položka k uvolnění
  */
@@ -32,19 +32,23 @@ entry *entry_create(const char *key){
     }
 
     strncpy(e_new->key, key, STRING_LENGHT);
-    e_new->spam_count = 0;
-    e_new->ham_count = 0;
-    e_new->spam_prob = 0;
-    e_new->ham_prob = 0;
+    e_new->count_entry_spam = 0;
+    e_new->count_entry_ham = 0;
+    e_new->prob_entry_spam = 0;
+    e_new->prob_entry_ham = 0;
     e_new->next = NULL;
 
     return e_new;
 }
 
 void entry_free(entry **head){
-    if(!head || !*head) return;
+    if(!head || !*head){
+        return;
+    }
 
-    if((*head)->next != NULL) entry_free(&(*head)->next);
+    if(!(*head)->next){
+        entry_free(&(*head)->next);
+    }
 
     entry_free_single(head);
 }
@@ -52,7 +56,7 @@ void entry_free(entry **head){
 void entry_print_single(const entry *e){
     if(!e) return;
 
-    printf("[Key: %s, SC: %ld, HC: %ld, SP: %.4f, HP: %.4f]", e->key, (unsigned long)e->spam_count, (unsigned long)e->ham_count, e->spam_prob, e->ham_prob);
+    printf("[Key: %s, SC: %ld, HC: %ld, SP: %.4f, HP: %.4f]", e->key, (unsigned long)e->count_entry_spam, (unsigned long)e->count_entry_ham, e->prob_entry_spam, e->prob_entry_ham);
 }
 
 void entry_print(entry *head){
@@ -87,11 +91,11 @@ int entry_insert(entry *head, entry *e_new){
     while(e_next){
         /* Stejny klic, prepsani polozky */
         if(!strncmp(e_last->key, e_new->key, STRING_LENGHT)) {
-            e_last->spam_count += e_new->spam_count;
-            e_last->ham_count += e_new->ham_count;
+            e_last->count_entry_spam += e_new->count_entry_spam;
+            e_last->count_entry_ham += e_new->count_entry_ham;
             entry_free_single(&e_new);
 
-            if(e_last->ham_count == 1){
+            if(e_last->count_entry_ham == 1){
                 return 3;
             }
             return 2;
@@ -102,11 +106,11 @@ int entry_insert(entry *head, entry *e_new){
 
     /* Stejny klic, prepsani polozky */
     if(!strncmp(e_last->key, e_new->key, STRING_LENGHT)) {
-        e_last->spam_count += e_new->spam_count;
-        e_last->ham_count += e_new->ham_count;
+        e_last->count_entry_spam += e_new->count_entry_spam;
+        e_last->count_entry_ham += e_new->count_entry_ham;
         entry_free_single(&e_new);
 
-        if(e_last->ham_count == 1){
+        if(e_last->count_entry_ham == 1){
             return 3;
         }
         return 2;

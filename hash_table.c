@@ -8,7 +8,8 @@
 /**
  * @brief Hashovací funkce tabulky.
  * @param key klíč k hashování
- * @return -1  Chyba\n
+ * @return Hash klíče.\n
+ *         -1 Chyba\n
  *         int Hash klíče
  */
 LOCAL int hash_function(const char *key){
@@ -34,8 +35,11 @@ hash_table *table_create(void){
 
     /* Alokace pameti hash table */
     table = (hash_table *)malloc(sizeof(hash_table));
-    if (!table) return NULL;
+    if (!table){
+        return NULL;
+    }
 
+    /* Inicializace atributu */
     table->size = TABLE_SIZE;
     table->count = 0;
     table->count_spam = 0;
@@ -123,12 +127,12 @@ int table_insert(hash_table *table, const char *key, int flag){
 
     /* Pocitadla */
     if(flag == FLAG_SPAM){
-        e_new->spam_count++;
+        e_new->count_entry_spam++;
         table->count_spam++;
     }
 
     if(flag == FLAG_HAM){
-        e_new->ham_count++;
+        e_new->count_entry_ham++;
         table->count_ham++;
     }
     table->count++;

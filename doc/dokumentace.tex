@@ -1,0 +1,85 @@
+% @file dokumentace.tex
+% @author Štěpán Faragula
+% @brief Dokumentace semestrální práce.
+% @version 1.0
+% @date 2022-29-12
+
+% Document class
+\documentclass[12pt]{report}
+
+% Use package
+\usepackage[utf8]{inputenc}
+\usepackage[IL2]{fontenc}
+\usepackage[czech]{babel}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nottoc]{tocbibind}
+\usepackage{graphicx}
+\graphicspath{{img/}}
+
+\usepackage[
+left=30mm, 
+right=30mm, 
+top=30mm, 
+bottom=30mm,
+]{geometry}
+
+% Begin document
+\begin{document}
+	
+	% Titulní strana
+	\begin{titlepage}
+		\centering
+		\Large
+		\sffamily
+		
+		\includegraphics[width=.7\textwidth]{fav}
+		
+		Semestrální práce z předmětu
+		
+		Programování v jazyku C
+		
+		% Vertikální mezera 15 mm.
+		\vspace{20mm}
+		{\Huge\bfseries Identifikace spamu naivním bayesovským klasifikátorem}
+		
+		\vspace{20mm}
+		% Čas je získán ze systému.
+		\today 
+		
+		\vfill			% Vyplní prostor
+		\raggedright	% Vše bude zarováno do leva.
+		Kamil Ekštein\\		% Příkaz \\ provede násilný zlom řádky.
+		A95097\\
+		\texttt{kekstein@students.zcu.cz}
+		
+		\vspace{\baselineskip}
+		\emph{Vyučující:}\\
+		Ing. Kamil Ekštein, Ph.D.\\
+		\texttt{kekstein@kiv.zcu.cz}
+	\end{titlepage}
+	
+	% Obsah
+	\tableofcontents
+
+	% Zadání
+	\chapter{Zadání}
+	Příliš žluťoučký kůň úpěl ďábelské ódy.
+	
+	% Analýza úlohy
+	\chapter{Analýza úlohy}
+	Příliš žluťoučký kůň úpěl ďábelské ódy.
+	
+	% Popis implementace
+	\chapter{Popis implementace}
+	Příliš žluťoučký kůň úpěl ďábelské ódy.
+	
+	% Uživatelská příručka
+	\chapter{Uživatelská příručka}
+	Příliš žluťoučký kůň úpěl ďábelské ódy.
+	
+	% Závěr
+	\chapter{Závěr}
+	Příliš žluťoučký kůň úpěl ďábelské ódy.
+	
+\end{document}

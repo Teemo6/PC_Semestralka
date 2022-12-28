@@ -5,7 +5,7 @@
 #include "hash_table.h"
 
 /* Cesta k train souborum */
-#define FILE_PATH "data/"
+#define FILE_PATH "../data/train/"
 
 /* Pripona souboru */
 #define FILE_EXTENSION ".txt"
