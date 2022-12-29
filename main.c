@@ -4,7 +4,6 @@
 #include "config.h"
 #include "error.h"
 #include "hash_table.h"
-#include "loader.h"
 #include "classifier.h"
 
 /* Pocet argumentu */
@@ -50,28 +49,26 @@ int main(int argc, char *argv[]){
     /* Kontrola argumentu */
     handle_input(argc, argv);
 
-    /* Hash table */
+    /* Vytvoreni hash tabulky */
     bayes_table = table_create();
     if(!bayes_table){
         error_table();
     }
 
-    /* Prevod cisel na int */
+    /* Prevod znaku na cislo */
     spam_cnt = strtol(ARG_SPAM_COUNT, NULL, 0);
     ham_cnt = strtol(ARG_HAM_COUNT, NULL, 0);
     test_cnt = strtol(ARG_TEST_COUNT, NULL, 0);
 
     /* Nacteni souboru */
-    load_train(bayes_table, ARG_SPAM_PATTERN, &spam_cnt, FLAG_SPAM);
-    load_train(bayes_table, ARG_HAM_PATTERN, &ham_cnt, FLAG_HAM);
+    classifier_train(bayes_table, ARG_SPAM_PATTERN, &spam_cnt, FLAG_SPAM);
+    classifier_train(bayes_table, ARG_HAM_PATTERN, &ham_cnt, FLAG_HAM);
 
     /* Vypocet pravdepodobnosti spamu, hamu */
     compute_probability(bayes_table);
 
-    /* Nacteni testu a vystup programu */
-    load_test(bayes_table, ARG_OUTPUT, ARG_TEST_PATTERN, &test_cnt);
-
-    table_print(bayes_table);
+    /* Klasifikace testovych souboru */
+    classifier_test(bayes_table, ARG_TEST_PATTERN, &test_cnt, ARG_OUTPUT);
 
     /* Uvolneni tabulky */
     table_free(&bayes_table);

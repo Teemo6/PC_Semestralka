@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -Wextra -ansi -pedantic
 BIN=spamid.exe
-OBJ=main.o error.o hash_table.o hash_table_entry.o loader.o classifier.o
+OBJ=main.o error.o hash_table.o hash_table_entry.o classifier.o
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@

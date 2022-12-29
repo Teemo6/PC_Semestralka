@@ -4,59 +4,56 @@
 % @version 1.0
 % @date 2022-29-12
 
-% Document class
+% Document
 \documentclass[12pt]{report}
 
-% Use package
+% Čeština
 \usepackage[utf8]{inputenc}
 \usepackage[IL2]{fontenc}
 \usepackage[czech]{babel}
+\usepackage{fontspec}
+
+% Formát dokumentu
+\usepackage{graphicx}
+\graphicspath{{img/}}
+\usepackage[
+	left=30mm, 
+	right=30mm, 
+	top=30mm, 
+	bottom=30mm,
+]{geometry}
+
+% Vychytávky
+\usepackage{lipsum}
+\usepackage{gensymb}
+\usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage[hidelinks]{hyperref}
 \usepackage[nottoc]{tocbibind}
-\usepackage{graphicx}
-\graphicspath{{img/}}
 
-\usepackage[
-left=30mm, 
-right=30mm, 
-top=30mm, 
-bottom=30mm,
-]{geometry}
-
-% Begin document
+% Begin
 \begin{document}
 	
 	% Titulní strana
 	\begin{titlepage}
 		\centering
 		\Large
-		\sffamily
 		
 		\includegraphics[width=.7\textwidth]{fav}
 		
-		Semestrální práce z předmětu
-		
-		Programování v jazyku C
-		
-		% Vertikální mezera 15 mm.
-		\vspace{20mm}
+		\vspace{15mm}
 		{\Huge\bfseries Identifikace spamu naivním bayesovským klasifikátorem}
 		
-		\vspace{20mm}
-		% Čas je získán ze systému.
-		\today 
+		\vspace{15mm}
+		{\LARGE Semestrální práce KIV/PC}
 		
-		\vfill			% Vyplní prostor
-		\raggedright	% Vše bude zarováno do leva.
-		Kamil Ekštein\\		% Příkaz \\ provede násilný zlom řádky.
-		A95097\\
-		\texttt{kekstein@students.zcu.cz}
-		
-		\vspace{\baselineskip}
-		\emph{Vyučující:}\\
-		Ing. Kamil Ekštein, Ph.D.\\
-		\texttt{kekstein@kiv.zcu.cz}
+		\vfill
+		\raggedright
+		Štěpán Faragula\\
+		A21B0119P\\
+		\texttt{farag844@students.zcu.cz} 
+		\hfill 
+		\today
 	\end{titlepage}
 	
 	% Obsah
@@ -64,7 +61,11 @@ bottom=30mm,
 
 	% Zadání
 	\chapter{Zadání}
-	Příliš žluťoučký kůň úpěl ďábelské ódy.
+	
+	\section{Zadání}
+	Naprogramujte v ANSI C přenositelnou1 konzolovou aplikaci, která bude rozhodovat, zda úsek textu (textový soubor předaný jako parametr na příkazové řádce) je nebo není spam.
+	
+	Program bude přijímat z příkazové řádky celkem sedm parametrů: První dva parametry budou vzor jména a počet trénovacích souborů obsahujících nevyžádané zprávy (tzv. spam). Třetí a čtvrtý parametr budou vzor jména a počet trénovacích souborů obsahujících vyžádané zprávy (tzv. ham). Pátý a šestý parametr budou vzor jména a počet testovacích souborů. Sedmý para- metr představuje jméno výstupního textového souboru, který bude po dokončení činnosti Vašeho	programu obsahovat výsledky klasifikace testovacích souborů.
 	
 	% Analýza úlohy
 	\chapter{Analýza úlohy}

@@ -19,12 +19,12 @@ void error_table(void){
 void error_fopen(char *path){
     printf("\n");
     printf("ERROR: Could not open file.\n");
-    printf("File path: %s\n", path);
+    printf("Path: %s\n", path);
     exit(1);
 }
 
 void error_probabilty(void){
     printf("\n");
-    printf("ERROR: Unable to compute probabilites.\n");
+    printf("ERROR: Unable to compute Bayes probabilites.\n");
     exit(1);
 }
