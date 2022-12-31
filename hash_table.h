@@ -21,6 +21,11 @@ typedef struct HASH_TABLE {
     size_t unique;          /* Počet vložených unikátních položek */
     size_t unique_spam;     /* Počet vložených unikátních položek spamu */
     size_t unique_ham;      /* Počet vložených unikátních položek hamu */
+    size_t file_count;      /* Počet všech trénovacích souborů */
+    size_t file_spam;       /* Počet trénovacích souborů obsahující spam */
+    size_t file_ham;        /* Počet trénovacích souborů obsahující spam */
+    double aprior_spam;     /* Apriorní pravděpodobnost výskytu spamu */
+    double aprior_ham;      /* Apriorní pravděpodobnost výskytu hamu */
 } hash_table;
 
 /**

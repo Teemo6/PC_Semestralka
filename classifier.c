@@ -6,6 +6,11 @@
 #include "error.h"
 #include "classifier.h"
 
+/* Cislo ktere se musí pricist k vypoctu pravdepodobnosti */
+/* Vychazim z radku 13 algoritmu 1 v zadani prace */
+/* P(<word_k>|c_i) = (n_k + 1) / (n + |slovnik|) */
+#define MAGICKA_JEDNICKA 1
+
 void classifier_train(hash_table *table, const char *train_pattern, const size_t *train_count, int flag){
     size_t i;
     char path[STRING_LENGHT], content[STRING_LENGHT];
@@ -33,6 +38,15 @@ void classifier_train(hash_table *table, const char *train_pattern, const size_t
         /* Uzavre soubor */
         fclose(file);
     }
+
+    if(flag == FLAG_SPAM){
+        table->file_count += (*train_count);
+        table->file_spam = (*train_count);
+    }
+    if(flag == FLAG_HAM){
+        table->file_count += (*train_count);
+        table->file_ham = (*train_count);
+    }
 }
 
 void compute_probability(hash_table *table){
@@ -43,18 +57,22 @@ void compute_probability(hash_table *table){
         error_probabilty();
     }
 
+    /* Apriorni pravdepodobnost */
+    table->aprior_spam = (double)table->file_spam / (double)(table->file_count);
+    table->aprior_ham = (double)table->file_ham / (double)(table->file_count);
+
     /* Projdi vsechny polozky tabulky */
     for(i = 0; i < table->size; i++){
         if(table->entries[i]){
             /* Projdi vsechny polozky seznamu */
             e_last = table->entries[i];
             while(e_last->next){
-                e_last->prob_entry_spam = ((double)e_last->count_entry_spam + 1) / (double)table->count_spam;
-                e_last->prob_entry_ham = ((double)e_last->count_entry_ham + 1) / (double)table->count_ham;
+                e_last->prob_entry_spam = (double)(e_last->count_entry_spam + MAGICKA_JEDNICKA) / (double)(table->count_spam + table->unique);
+                e_last->prob_entry_ham = (double)(e_last->count_entry_ham + MAGICKA_JEDNICKA) / (double)(table->count_ham + table->unique);
                 e_last = e_last->next;
             }
-            e_last->prob_entry_spam = ((double)e_last->count_entry_spam + 1) / (double)table->count_spam;
-            e_last->prob_entry_ham = ((double)e_last->count_entry_ham + 1) / (double)table->count_ham;
+            e_last->prob_entry_spam = (double)(e_last->count_entry_spam + MAGICKA_JEDNICKA) / (double)(table->count_spam + table->unique);
+            e_last->prob_entry_ham = (double)(e_last->count_entry_ham + MAGICKA_JEDNICKA) / (double)(table->count_ham + table->unique);
         }
     }
 }
@@ -78,6 +96,9 @@ void classifier_test(hash_table *table, const char *test_pattern, const size_t *
         file_in = fopen(path, "r");
         if(!file_in) {
             table_free(&table);
+            fprintf(file_out, "ERROR: Could not open file.\n");
+            fprintf(file_out, "Path: %s\n", path);
+            fclose(file_out);
             error_fopen(path);
         }
 
@@ -104,6 +125,10 @@ void classifier_test(hash_table *table, const char *test_pattern, const size_t *
                 ham += log10(e->prob_entry_ham);
             }
         }
+
+        /* Pricteni logaritmu apriorni pravdepodobnosti */
+        spam += log10(table->aprior_spam);
+        spam += log10(table->aprior_ham);
 
         /* Klasifikuje soubor */
         if(spam > ham){

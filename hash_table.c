@@ -47,6 +47,11 @@ hash_table *table_create(void){
     table->unique = 0;
     table->unique_spam = 0;
     table->unique_ham = 0;
+    table->file_count = 0;
+    table->file_spam = 0;
+    table->file_ham = 0;
+    table->aprior_spam = 0;
+    table->aprior_ham = 0;
 
     /* Alokace pameti prvku */
     table->entries = (entry **)calloc(table->size, sizeof(entry *));

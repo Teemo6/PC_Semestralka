@@ -10,4 +10,4 @@ $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 
 clean :
-	rm $(BIN) $(OBJ)
+	del $(BIN) $(OBJ)

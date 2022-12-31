@@ -14,7 +14,11 @@
 \usepackage{fontspec}
 
 % Formát dokumentu
+\usepackage{caption}
 \usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xspace}
+\usepackage{parskip}
 \graphicspath{{img/}}
 \usepackage[
 	left=30mm, 
@@ -24,12 +28,20 @@
 ]{geometry}
 
 % Vychytávky
-\usepackage{lipsum}
-\usepackage{gensymb}
-\usepackage{amsfonts}
-\usepackage{amsmath}
-\usepackage[hidelinks]{hyperref}
-\usepackage[nottoc]{tocbibind}
+\usepackage{lipsum}			% Lorem ipsum
+\usepackage{menukeys}		% Klavesy
+\usepackage{dirtree}		% Adresarova struktura
+
+% Macra
+\newcommand\la{\textlangle}  					% levá závorka <
+\newcommand\ra{\textrangle}						% pravá závorka >
+\newcommand\laratexttt[1]{\la\texttt{#1}\ra}	% texttt v závorkách <>
+\newcommand\laratextit[1]{\la\textit{#1}\ra}	% textit v závorkách <>
+\newcommand\indentt[1]{						
+	\setlength\parindent{5mm}
+	#1
+	\setlength\parindent{0mm}
+	}											% odstavec
 
 % Begin
 \begin{document}
@@ -50,8 +62,7 @@
 		\vfill
 		\raggedright
 		Štěpán Faragula\\
-		A21B0119P\\
-		\texttt{farag844@students.zcu.cz} 
+		A21B0119P
 		\hfill 
 		\today
 	\end{titlepage}
@@ -61,15 +72,62 @@
 
 	% Zadání
 	\chapter{Zadání}
+	Při volbě zadání semestrální práce jsme měli na výběr z následujících možností:
+		
+	\begin{enumerate}
+		\item Hledání kořenů rovnice
+		\item Identifikace spamu naivním bayesovským klasifikátorem
+		\item Celočíselná kalkulačka s neomezenou přesností
+	\end{enumerate}
+		
+	V této práci je popsáno řešení práce \textbf{číslo 2}.
 	
-	\section{Zadání}
-	Naprogramujte v ANSI C přenositelnou1 konzolovou aplikaci, která bude rozhodovat, zda úsek textu (textový soubor předaný jako parametr na příkazové řádce) je nebo není spam.
+	\section{Detaily zadání}
+	Naprogramujte v ANSI C přenositelnou \textbf{konzolovou aplikaci}, která bude \textbf{rozhodovat, zda úsek textu} (textový soubor předaný jako parametr na příkazové řádce) \textbf{je nebo není spam}.
 	
-	Program bude přijímat z příkazové řádky celkem sedm parametrů: První dva parametry budou vzor jména a počet trénovacích souborů obsahujících nevyžádané zprávy (tzv. spam). Třetí a čtvrtý parametr budou vzor jména a počet trénovacích souborů obsahujících vyžádané zprávy (tzv. ham). Pátý a šestý parametr budou vzor jména a počet testovacích souborů. Sedmý para- metr představuje jméno výstupního textového souboru, který bude po dokončení činnosti Vašeho	programu obsahovat výsledky klasifikace testovacích souborů.
+	Program bude přijímat z příkazové řádky celkem \textbf{sedm} parametrů: První dva parametry budou vzor jména a počet trénovacích souborů obsahujících nevyžádané zprávy (tzv. \textbf{spam}). Třetí a čtvrtý parametr budou vzor jména a počet trénovacích souborů obsahujících vyžádané zprávy (tzv. \textbf{ham}). Pátý a šestý parametr budou vzor jména a počet testovacích souborů. Sedmý para- metr představuje jméno výstupního textového souboru, který bude po dokončení činnosti Vašeho	programu obsahovat výsledky klasifikace testovacích souborů.
 	
+	Program se tedy bude spouštět příkazem
+	
+	\indentt{\texttt{spamid.exe} \laratexttt{spam} \laratexttt{spam-cnt} \laratexttt{ham} \laratexttt{ham-cnt} \laratexttt{test} \laratexttt{test-cnt} \laratexttt{out-file}$\,$\keys{\return}}
+	
+	Symboly \laratexttt{spam}, \laratexttt{ham} a \laratexttt{test} představují vzory jména vstupních souborů. Symboly \laratexttt{spam-cnt}, \laratexttt{ham-cnt} a \laratexttt{test-cnt} představují počty vstupních souborů. Vstupní soubory mají následující pojmenování: \texttt{vzorN}, kde \texttt{N} je celé číslo z intervalu \la1;\textit{N}\ra. Přípona všech vstupních souborů je \texttt{.txt}, přípona není součástí vzoru. Váš program tedy může být během testování spuštěn například takto:
+	
+	\indentt{
+	\texttt{spamid.exe spam 10 ham 20 test 50 result.txt}$\,$\keys{\return}
+	}
+	
+	Výsledkem činnosti programu bude textový soubor, který bude obsahovat seznam testovaných souborů a jejich klasifikaci (tedy rozhodnutí, zda je o spam či neškodný obsah – ham).
+	
+	Pokud nebude na příkazové řádce uvedeno právě sedm argumentů, vypište chybové hlášení a stručný návod k použití programu v angličtině podle běžných zvyklostí (viz např. ukázková semestrální práce na webu předmětu Programování v jazyce C). \textbf{Vstupem programu jsou pouze argumenty na příkazové řádce – interakce s uživatelem pomocí klávesnice či myši v průběhu práce programu se neočekává.}
+	
+	Hotovou práci odevzdejte v jediném archivu typu ZIP prostřednictvím automatického odevzdávacího a validačního systému. Postupujte podle instrukcí uvedených na webu předmětu. Archiv nechť obsahuje všechny zdrojové soubory potřebné k přeložení programu, \textbf{makefile} pro Windows i Linux (pro překlad v Linuxu připravte soubor pojmenovaný \texttt{makefile} a pro Windows \texttt{makefile.win}) a dokumentaci ve formátu PDF vytvořenou v typografickém systému \TeX, resp. \LaTeX. Bude-li některá z částí chybět, kontrolní skript Vaši práci odmítne.
+
 	% Analýza úlohy
 	\chapter{Analýza úlohy}
-	Příliš žluťoučký kůň úpěl ďábelské ódy.
+	V úloze máme za úkol \textbf{zařadit soubory} do jedné ze dvou tříd – \textbf{spam} či \textbf{ham}. Je nám výrazně doporučeno použít \textbf{naivní bayesovský klasifikátor}.
+	
+	\section{Definice problému}
+	Testovací soubory budeme klasifikovat podle jejich obsažených slov. Budeme tedy pro každý soubor potřebovat vytvořit jakýsi slovník. Tento slovník bude uchovávat informaci o každém 
+	
+	
+	Nejprve potřebujeme vytvořit slovník 
+	Nejprve tedy vytvoříme \textbf{slovník klasifikátoru} načtením všech trénovacích souborů. U každého slova budeme uchovávat jeho \textbf{počet} a \textbf{pravděpodobnost výskytu}. 
+	
+	Testovací soubory budeme třídit podle \textbf{slov}, která obsahuje. Z těchto slov vytvoříme \textbf{slovník}, který budeme porovnávat se \textbf{slovníkem klasifikátoru}. V zadání nám je doporučeno použít \textbf{naivní bayesovský klasifikátor}.
+	
+	K vyřešení úlohy se potřebujeme vyřešit \textbf{následující problémy}:
+	\begin{itemize}
+		\item 
+		\item Volba vhodné struktury pro slovník slov
+		\item Samotná klasifikace testovacích souborů
+	\end{itemize}
+	
+	\section{Zvolení datové struktury slovníku}
+	Slovník musí obsahovat záznam o každém slově, které se načetlo.
+	Potřebujeme využít takovou strukturu, která nám umožní rychle vyhledávat slova v obsáhlém slovníku. 
+	
+	Jelikož ANSI C nenabízí žádnou takovou strukturu, budeme si ji muset naprogramovat sami.
 	
 	% Popis implementace
 	\chapter{Popis implementace}
