@@ -1,1 +1,1 @@
-mingw32-make clean_win
+mingw32-make clean
