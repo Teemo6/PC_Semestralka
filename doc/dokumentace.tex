@@ -14,6 +14,7 @@
 \usepackage{fontspec}
 
 % Formát dokumentu
+\usepackage{amsmath}
 \usepackage{caption}
 \usepackage{graphicx}
 \usepackage{textcomp}
@@ -105,29 +106,46 @@
 
 	% Analýza úlohy
 	\chapter{Analýza úlohy}
-	V úloze máme za úkol \textbf{zařadit soubory} do jedné ze dvou tříd – \textbf{spam} či \textbf{ham}. Je nám výrazně doporučeno použít \textbf{naivní bayesovský klasifikátor}.
+	V úloze máme za úkol \textbf{zařadit soubory} do jedné ze dvou tříd – \textbf{spam} či \textbf{ham}. Je nám výrazně doporučeno použít \textbf{naivní bayesovský klasifikátor}, není tedy důvod rozebírat, jaký způsob klasifikace zvolíme.
 	
+	\section{Naivní bayesovský klasifikátor}
+	Algoritmus, který má dvě fáze – \textbf{fáze učení} a \textbf{fáze klasifikace}.
+	
+		\subsection{Fáze učení}
+		V této fázi vycházíme z předpokladu, že máme k dispozici \textbf{trénovací soubory} obsahující pouze slova označena jako spam nebo ham. Každý soubor přečteme a vytvoříme tak \textbf{slovník klasifikátoru}. U každého slova budeme uchovávat informaci o jeho \textbf{počtu výskytu} v trénovacích souborech a jeho \textbf{podmíněnou pravděpodobnost výskytu}. Takto vytvořený slovník by měl ještě obsahovat \textbf{apriorní pravděpodobnost}, která analýzou vstupních souborů stanoví \textbf{výchozí pravděpodobnost výskytu spamu či hamu}.
+	
+		\subsection{Fáze klasifikace}
+		Testovací soubory budeme klasifikovat podle obsažených slov. Průběh klasifikace je takový, že každému slovu vyskytující se v \textbf{testovacím souboru a zároveň ve slovníku klasifikátoru} přiřadíme \textbf{podmíněnou pravděpodobnosti výskytu} slova ve spamu a hamu. Dále sečteme logaritmy všech \textbf{podmíněných pravděpodobností} slov a přičteme logaritmus \textbf{apriorní pravděpodobnosti} třídy. Soubor zařadíme do té třídy, která bude mít \textbf{největší výsledek}. Klasifikace souboru je popsána rovnicí \ref{equ:megaVzorec}
+		
+		\begin{equation}
+			c = \arg\max_{c_i \in C}\left( \log (P(c_i)) + \sum_{k\,\in\,\text{\bfseries pozice}} \log (P(\la \text{word}_k | c_i \ra))\right)
+			\label{equ:megaVzorec}
+		\end{equation}
+	
+		kde:
+		\begin{itemize}
+			\item $C$ - množina všech tříd
+			\item $c_i$ - označení třídy (spam, ham)
+			\item $P(c_i)$ - apriorní pravděpodobnost dané třídy
+			\item $P(\la \text{word}_k | c_i \ra)$ - podmíněná pravděpodobnost výskytu slova 
+		\end{itemize}
+			
 	\section{Definice problému}
-	Testovací soubory budeme klasifikovat podle jejich obsažených slov. Budeme tedy pro každý soubor potřebovat vytvořit jakýsi slovník. Tento slovník bude uchovávat informaci o každém 
+	Klasifikátor potřebuje ke své činnosti \textbf{slovník}. \textbf{Slovník} můžeme vnímat jako \textbf{datovou strukturu}, která dokáže vrátit výsledek podle hledaného klíče (slova). Chceme tedy, aby tato struktura vkládala a vyhledávala slova \textbf{co nejrychleji} pro obsáhlý slovník. Jelikož úlohu vytváříme v ANSI C, musíme si tuto strukturu naprogramovat sami. 
 	
+	Dále potřebujeme vyřešit \textbf{způsob klasifikace souborů}.
 	
-	Nejprve potřebujeme vytvořit slovník 
-	Nejprve tedy vytvoříme \textbf{slovník klasifikátoru} načtením všech trénovacích souborů. U každého slova budeme uchovávat jeho \textbf{počet} a \textbf{pravděpodobnost výskytu}. 
+	\section{Volba datové struktury pro slovník}
+	Slovník bude obsahovat informaci o všech \textbf{unikátních slov} ze souboru. Ve slovníku nepotřebujeme mazat položky, stačí nám pouze funkce \textbf{přidání} a \textbf{hledání}. Chceme tedy, aby tyto operace pracovali co nejrychleji.
 	
-	Testovací soubory budeme třídit podle \textbf{slov}, která obsahuje. Z těchto slov vytvoříme \textbf{slovník}, který budeme porovnávat se \textbf{slovníkem klasifikátoru}. V zadání nám je doporučeno použít \textbf{naivní bayesovský klasifikátor}.
+		\subsection{Dynamické pole}
 	
-	K vyřešení úlohy se potřebujeme vyřešit \textbf{následující problémy}:
-	\begin{itemize}
-		\item 
-		\item Volba vhodné struktury pro slovník slov
-		\item Samotná klasifikace testovacích souborů
-	\end{itemize}
+		\subsection{Hash tabulka}
+		
+		\subsection{Trie}
 	
-	\section{Zvolení datové struktury slovníku}
-	Slovník musí obsahovat záznam o každém slově, které se načetlo.
-	Potřebujeme využít takovou strukturu, která nám umožní rychle vyhledávat slova v obsáhlém slovníku. 
-	
-	Jelikož ANSI C nenabízí žádnou takovou strukturu, budeme si ji muset naprogramovat sami.
+	\section{Způsob klasifikace}
+	Zde se nabízí dvě možnosti: (i) Vytvoříme ještě jeden \textbf{slovník} obsahující slova testovacího souboru, který následně \textbf{porovnáme se slovníkem klasifikátoru}, (ii) nebo jednotlivá slova budeme porovnávat tzv. \textit{on the fly} způsobem, kde \textbf{postupným čtením slov} rovnou klasifikujeme soubor jako spam či ham \textbf{bez vytváření dalšího slovníku}. Výhoda přístupu (i) je uchování čitelnosti programu za cenu vyšší paměťové náročnosti. Výhoda přístupu (ii) je jednoduchost implementace bez nároků na paměť.
 	
 	% Popis implementace
 	\chapter{Popis implementace}
