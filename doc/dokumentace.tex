@@ -29,21 +29,28 @@
 ]{geometry}
 
 % Vychytávky
-\usepackage{lipsum}			% Lorem ipsum
-\usepackage{menukeys}		% Klavesy
-\usepackage{dirtree}		% Adresarova struktura
+\usepackage{lipsum}								% Lorem ipsum
+\usepackage{menukeys}							% Klavesy
+\usepackage{algorithm}							% Algoritmus
+\usepackage[noend]{algpseudocode}				% Pseudokod
+\usepackage{dirtree}							% Adresarova struktura
 
 % Macra
 \newcommand\la{\textlangle}  					% levá závorka <
 \newcommand\ra{\textrangle}						% pravá závorka >
 \newcommand\laratexttt[1]{\la\texttt{#1}\ra}	% texttt v závorkách <>
 \newcommand\laratextit[1]{\la\textit{#1}\ra}	% textit v závorkách <>
+
 \newcommand\indentt[1]{						
 	\setlength\parindent{5mm}
 	#1
 	\setlength\parindent{0mm}
 	}											% odstavec
 
+\algnewcommand{\StartComment}[1]{
+	\State\(\triangleright\) #1
+	}											% komentář pseudokódu
+		
 % Begin
 \begin{document}
 	
@@ -86,7 +93,7 @@
 	\section{Detaily zadání}
 	Naprogramujte v ANSI C přenositelnou \textbf{konzolovou aplikaci}, která bude \textbf{rozhodovat, zda úsek textu} (textový soubor předaný jako parametr na příkazové řádce) \textbf{je nebo není spam}.
 	
-	Program bude přijímat z příkazové řádky celkem \textbf{sedm} parametrů: První dva parametry budou vzor jména a počet trénovacích souborů obsahujících nevyžádané zprávy (tzv. \textbf{spam}). Třetí a čtvrtý parametr budou vzor jména a počet trénovacích souborů obsahujících vyžádané zprávy (tzv. \textbf{ham}). Pátý a šestý parametr budou vzor jména a počet testovacích souborů. Sedmý para- metr představuje jméno výstupního textového souboru, který bude po dokončení činnosti Vašeho	programu obsahovat výsledky klasifikace testovacích souborů.
+	Program bude přijímat z příkazové řádky celkem \textbf{sedm} parametrů: První dva parametry budou vzor jména a počet trénovacích souborů obsahujících nevyžádané zprávy (tzv. \textbf{spam}). Třetí a čtvrtý parametr budou vzor jména a počet trénovacích souborů obsahujících vyžádané zprávy (tzv. \textbf{ham}). Pátý a šestý parametr budou vzor jména a počet testovacích souborů. Sedmý parametr představuje jméno výstupního textového souboru, který bude po dokončení činnosti Vašeho	programu obsahovat výsledky klasifikace testovacích souborů.
 	
 	Program se tedy bude spouštět příkazem
 	
@@ -98,7 +105,7 @@
 	\texttt{spamid.exe spam 10 ham 20 test 50 result.txt}$\,$\keys{\return}
 	}
 	
-	Výsledkem činnosti programu bude textový soubor, který bude obsahovat seznam testovaných souborů a jejich klasifikaci (tedy rozhodnutí, zda je o spam či neškodný obsah – ham).
+	Výsledkem činnosti programu bude textový soubor, který bude obsahovat seznam testovaných souborů a jejich klasifikaci (tedy rozhodnutí, zda jde o spam či neškodný obsah – ham).
 	
 	Pokud nebude na příkazové řádce uvedeno právě sedm argumentů, vypište chybové hlášení a stručný návod k použití programu v angličtině podle běžných zvyklostí (viz např. ukázková semestrální práce na webu předmětu Programování v jazyce C). \textbf{Vstupem programu jsou pouze argumenty na příkazové řádce – interakce s uživatelem pomocí klávesnice či myši v průběhu práce programu se neočekává.}
 	
@@ -112,51 +119,215 @@
 	Algoritmus, který má dvě fáze – \textbf{fáze učení} a \textbf{fáze klasifikace}.
 	
 		\subsection{Fáze učení}
-		V této fázi vycházíme z předpokladu, že máme k dispozici \textbf{trénovací soubory} obsahující pouze slova označena jako spam nebo ham. Každý soubor přečteme a vytvoříme tak \textbf{slovník klasifikátoru}. U každého slova budeme uchovávat informaci o jeho \textbf{počtu výskytu} v trénovacích souborech a jeho \textbf{podmíněnou pravděpodobnost výskytu}. Takto vytvořený slovník by měl ještě obsahovat \textbf{apriorní pravděpodobnost}, která analýzou vstupních souborů stanoví \textbf{výchozí pravděpodobnost výskytu spamu či hamu}.
+		V této fázi vycházíme z předpokladu, že máme k dispozici \textbf{trénovací soubory} obsahující pouze slova označena jako spam nebo ham. U každého přečteného \textbf{slova} budeme uchovávat informaci o jeho \textbf{počtu výskytu} v souboru a jeho \textbf{podmíněnou pravděpodobnost výskytu}. Tímto způsobem přečteme každý trénovací soubor a všechna slova spojíme do \textbf{slovníku klasifikátoru}. Takto vytvořený \textbf{slovník} by měl ještě obsahovat \textbf{apriorní pravděpodobnost}, která analýzou vstupních souborů stanoví \textbf{výchozí pravděpodobnost výskytu spamu či hamu}.
 	
 		\subsection{Fáze klasifikace}
-		Testovací soubory budeme klasifikovat podle obsažených slov. Průběh klasifikace je takový, že každému slovu vyskytující se v \textbf{testovacím souboru a zároveň ve slovníku klasifikátoru} přiřadíme \textbf{podmíněnou pravděpodobnosti výskytu} slova ve spamu a hamu. Dále sečteme logaritmy všech \textbf{podmíněných pravděpodobností} slov a přičteme logaritmus \textbf{apriorní pravděpodobnosti} třídy. Soubor zařadíme do té třídy, která bude mít \textbf{největší výsledek}. Klasifikace souboru je popsána rovnicí \ref{equ:megaVzorec}
-		
+		\textbf{Testovací soubory} budeme klasifikovat podle jeho obsažených slov. Průběh klasifikace je takový, že každému slovu vyskytujícímu se v \textbf{testovacím souboru a zároveň ve slovníku klasifikátoru} přiřadíme \textbf{podmíněnou pravděpodobnosti výskytu} slova spamu a hamu. Dále sečteme logaritmy všech \textbf{podmíněných pravděpodobností} slov a přičteme logaritmus \textbf{apriorní pravděpodobnosti} třídy. Soubor zařadíme do té třídy, která bude mít \textbf{vyšší výsledek}. Klasifikace souboru je popsána rovnicí \ref{equ:megaVzorec} na straně \pageref{equ:megaVzorec} kde:
+		\begin{itemize}
+			\item $C$ – množina všech tříd
+			\item $c_i$ – označení třídy (spam, ham)
+			\item $P(c_i)$ – apriorní pravděpodobnost třídy
+			\item $P(\la \text{word}_k | c_i \ra)$ – podmíněná pravděpodobnost výskytu slova 
+		\end{itemize}
+	
 		\begin{equation}
-			c = \arg\max_{c_i \in C}\left( \log (P(c_i)) + \sum_{k\,\in\,\text{\bfseries pozice}} \log (P(\la \text{word}_k | c_i \ra))\right)
+			c = \arg\max_{c_i \in C}\left( \log (P(c_i)) + \sum_{k\,\in\,\text{\bfseries text}} \log (P(\la \text{word}_k | c_i \ra))\right)
 			\label{equ:megaVzorec}
 		\end{equation}
-	
-		kde:
-		\begin{itemize}
-			\item $C$ - množina všech tříd
-			\item $c_i$ - označení třídy (spam, ham)
-			\item $P(c_i)$ - apriorní pravděpodobnost dané třídy
-			\item $P(\la \text{word}_k | c_i \ra)$ - podmíněná pravděpodobnost výskytu slova 
-		\end{itemize}
 			
 	\section{Definice problému}
-	Klasifikátor potřebuje ke své činnosti \textbf{slovník}. \textbf{Slovník} můžeme vnímat jako \textbf{datovou strukturu}, která dokáže vrátit výsledek podle hledaného klíče (slova). Chceme tedy, aby tato struktura vkládala a vyhledávala slova \textbf{co nejrychleji} pro obsáhlý slovník. Jelikož úlohu vytváříme v ANSI C, musíme si tuto strukturu naprogramovat sami. 
+	Klasifikátor potřebuje ke své činnosti \textbf{slovník}. \textbf{Slovník} můžeme vnímat jako \textbf{datovou strukturu}, která dokáže vrátit \textbf{položku} podle hledaného výrazu (řetězce). Musíme vnímat \textbf{rozdíl mezi položkou a slovníkem}, jedná se totiž o dvě různé struktury. \textbf{Položka} je slovo obsažené ve slovníku reprezentováno řetězcem.
 	
-	Dále potřebujeme vyřešit \textbf{způsob klasifikace souborů}.
+	Dále potřebujeme vyřešit samotný \textbf{způsob klasifikace souborů}.
 	
 	\section{Volba datové struktury pro slovník}
-	Slovník bude obsahovat informaci o všech \textbf{unikátních slov} ze souboru. Ve slovníku nepotřebujeme mazat položky, stačí nám pouze funkce \textbf{přidání} a \textbf{hledání}. Chceme tedy, aby tyto operace pracovali co nejrychleji.
+	Slovník bude obsahovat informace o všech \textbf{unikátních slovech} ze skupiny souborů. Ve slovníku \textbf{nepotřebujeme mazat} položky. Pro naší potřebu nám tedy stačí pouze operace \textbf{přidání} a \textbf{hledání}. Chceme, aby tyto funkce pracovaly co nejrychleji.
 	
-		\subsection{Dynamické pole}
-	
-		\subsection{Hash tabulka}
+		\subsection{Spojový seznam}
+		Jedná se o \textbf{seznam proměnné délky}, kde si každý prvek uchovává referenci na další prvek v seznamu. Spojový seznam je velmi jednoduchý na implementaci a zajišťuje \textbf{snadné přidání} prvku do seznamu v čase \textit{O(1)}. Jeho obrovskou nevýhodou je, že neumožňuje přístup k prvku na konkrétním indexu. Kdybychom chtěli najít prvek podle nějakého klíče, museli bysme projít celý seznam a vždy porovnávat hodnotu s klíčem. \textbf{Časová složitost vyhledávání} je tedy \textit{O(n)}. 
 		
-		\subsection{Trie}
+		Spojová seznam má sice rychlý čas vložení prvku, avšak kvůli dlouhému vyhledávání to \textbf{není} vhodná struktura pro naši úlohu. 
+		
+		Na obrázku \ref{fig:spojovySeznam} na straně \pageref{fig:spojovySeznam} je vidět grafické znázornění spojového seznamu.
+					
+		\subsection{Tabulka s rozptýlenými hodnotami}
+		\textbf{Tabulka s rozptýlenými hodnotami}, tzv. \textit{hash tabulka}, je datová struktura, která umožňuje rychlou manipulaci prvků podle \textbf{klíče}. Ke své činnosti využívá \textbf{hashovací funkci}, podle které získáme přístup k indexu položek. Kvalita této funkce se odrazí na celkové kvalitě tabulky. Chceme, aby funkce generovala vždy \textbf{stejné číslo pro stejný vstup}. Poté je důležité, aby funkce přiřazovala novým položkám indexy \textbf{rovnoměrného rozdělení}. Je také důležité se co nejvíce \textbf{vyhýbat kolizím}. Právě kvůli kolizím je ve skutečnosti na každém indexu tabulky uložen spojový seznam. Pokud k nějaké kolizi dojde, jednoduše přiřadíme hodnotu do spojového seznamu. \textbf{Časová složitost přidání} prvku do tabulky je tedy \textit{O(1)}. Při hledání prvku získáme index, na kterém se prvek nachází, v čase \textit{O(1)}. Poté stačí hodnotu hledat ve spojovém seznamu. Pokud máme \textbf{velmi dobrou hashovací funkci}, na každém indexu tabulky by se nacházel právě jeden prvek, v tom případě by byla \textbf{celková časová složitost hledání} \textit{O(1)}. Při použití \textbf{mizerné hashovací funkce} bude docházet ke kolizím a v nejhorším případě se všechny prvky tabulky přiřadí právě na jeden index. V takovém případě by \textbf{celková časová složitost hledání} byla \textit{O(n)}.
+		
+		Pro řešení práce \textbf{byla využita} právě hash tabulka, jelikož je pro náš účel ideální datová struktura. Při samotné implementaci však budeme muset dbát na vymýšlení co nejlepší hashovací funkci.
+		
+		Na obrázku \ref{fig:hashTabulka} na straně \pageref{fig:hashTabulka} je vidět grafické znázornění tabulky s rozptýlenými hodnotami.
+
+		\begin{figure}
+			\centering
+			\includegraphics{spojovySeznam}
+			\caption{Spojový seznam}
+			\label{fig:spojovySeznam}
+		\end{figure}
+
+		\begin{figure}
+			\centering
+			\includegraphics{hashTabulka}
+			\caption{Tabulka s rozptýlenými hodnotami (hash tabulka)}
+			\label{fig:hashTabulka}
+		\end{figure}
 	
 	\section{Způsob klasifikace}
-	Zde se nabízí dvě možnosti: (i) Vytvoříme ještě jeden \textbf{slovník} obsahující slova testovacího souboru, který následně \textbf{porovnáme se slovníkem klasifikátoru}, (ii) nebo jednotlivá slova budeme porovnávat tzv. \textit{on the fly} způsobem, kde \textbf{postupným čtením slov} rovnou klasifikujeme soubor jako spam či ham \textbf{bez vytváření dalšího slovníku}. Výhoda přístupu (i) je uchování čitelnosti programu za cenu vyšší paměťové náročnosti. Výhoda přístupu (ii) je jednoduchost implementace bez nároků na paměť.
+	\label{klasifikace}
+	Zde se nabízí dvě možnosti: (i) Vytvoříme ještě jeden \textbf{slovník} obsahující slova testovacího souboru, který následně \textbf{porovnáme se slovníkem klasifikátoru}, (ii) nebo jednotlivá slova budeme porovnávat tzv. \textit{on the fly} způsobem, kde \textbf{postupným čtením slov} rovnou počítáme pravděpodobnost tříd a soubor klasifikujeme jako spam či ham \textbf{bez vytváření dalšího slovníku}. Výhoda přístupu (i) je uchování čitelnosti programu za cenu vyšší paměťové náročnosti. Výhoda přístupu (ii) je jednoduchost implementace bez nároků na paměť.
+	
+	Při řešení této semestrální práce byl využit postup (ii).
 	
 	% Popis implementace
 	\chapter{Popis implementace}
-	Příliš žluťoučký kůň úpěl ďábelské ódy.
-	
+	Program je implementován v \textbf{programovacím jazyce C} standardu \textbf{ANSI}.
+ 	
+ 	\section{Moduly programu}
+ 	Modulem je myšleno \textbf{dvojice hlavičkového souboru} (přípona \texttt{.h}) a \textbf{zdrojového kódu} (přípona \texttt{.c}). Funkce jednotlivých modulů je následující:
+ 	
+ 	\begin{itemize}
+ 		\item \texttt{hash\_table} – datová struktura hash tabulky
+ 		\item \texttt{hash\_table\_entry} – datová struktura položky pro hash tabulku
+ 		\item \texttt{classifier} – bayesovský klasifikátor
+ 		\item \texttt{error} – obsahuje chybové hlášky
+ 	\end{itemize}
+ 
+ 	Dále se v práci nachází soubor \texttt{main.c}, který \textbf{vykonává algoritmus} naivního bayesovského klasifikátoru a \textbf{spouští program}. Nakonec je v projektu soubor \texttt{config.h}, kde jsou \textbf{pomocné definice}. 
+ 	
+ 	\section{Implementace hash tabulky}
+    Implementace hash tabulky je rozdělena na \textbf{dvě části}, jednou je \textbf{položka tabulky}, druhou \textbf{samotná tabulka}. Každá část má svou vlastní strukturu.
+ 	
+ 	 	\subsection{Struktura položky tabulky}
+ 		Jedná se o \textbf{přečtené slovo z trénovacího souboru}. Struktura položky je implementována jako \textbf{spojový seznam} a nazývá se \texttt{entry}.
+ 		
+ 		Každá položka si uchovává svůj \textbf{unikátní klíč} (řetězec), \textbf{počítadla výskytu slova} v souborech spamu a hamu, \textbf{podmíněnou pravděpodobnost výskytu} v těchto souborech a \textbf{referenci na další položku}. Struktura obsahuje \textbf{vlastní funkce přidání a hledání položky}, které jsou \textbf{následně volány v hash tabulce}.
+ 		
+ 		\textbf{Novou položku} vytvoříme funkcí \texttt{entry\_create()}, která alokuje potřebnou paměť. Maximální velikost uloženého řetězce je dána hodnotou \texttt{STRING\_LENGTH} v souboru \texttt{config.h}.
+ 		
+ 		\textbf{Vložení položky} do seznamu provedeme funkcí \texttt{entry\_insert()}, která novou položku přidá a při vložení již existující navýší počítadlo.
+ 		
+ 		\textbf{Hledání položky} provedeme funkcí \texttt{entry\_find}.
+ 		 	
+ 		\subsection{Struktura hash tabulky}
+ 		Hash tabulka nám slouží pro \textbf{uložení slov trénovacích souborů}. Má vždy \textbf{stejnou velikost} podle hodnoty \texttt{TABLE\_SIZE} v hlavičkovém souboru \texttt{hash\_table.h}. Tabulka \textbf{ukládá položky} \texttt{entry}, které se mohou zřetězit a vytvořit tak \textbf{spojový seznam}. Do tabulky tedy na každý index ukládáme \textbf{reference na první prvky spojového seznamu}. 
+ 		
+ 		Její struktura obsahuje \textbf{reference na položky}, vypočítanou \textbf{apriorní pravděpodobnost tříd} a různá \textbf{počítadla}. Struktura je v kódu \textbf{řádně okomentována}, nemá zde smysl rozebírat, co které počítadlo počítá. Nazývá se \texttt{hash\_table}.
+ 		
+ 		Pro \textbf{vytvoření nové tabulky} voláme funkci \texttt{table\_create()}, která alokuje paměť a nastaví hodnotu všech položek na \texttt{NULL}.
+ 		
+ 		Pro \textbf{vložení nové položky} voláme funkci \texttt{table\_insert()}, která podle hashovací funkce \texttt{hash\_function()} přiřadí index v tabulce podle převzatého klíče. Parametrem \texttt{flag} rozlišujeme, jestli se jedná o \textbf{spamovou} či \textbf{hamovou položku} kvůli počítadlům slov. Samotné vkládání do spojového seznamu řeší volaná funkce \texttt{entry\_insert()} ve struktuře \texttt{entry}.
+ 
+ 		\textbf{Položku hledáme} funkcí \texttt{table\_find()}, která vypočítá index položky pomocí hashovací funkce a samotné hledání položky ve spojovém seznamu je opět řešeno voláním funkce \texttt{entry\_find()} ve struktuře \texttt{entry}.
+ 	
+ 	\section{Implementace bayesovského klasifikátoru}
+ 	Klasifikátor využívá strukturu \texttt{hash\_table} pro \textbf{uložení slov z trénovacích souborů}. Samotný algoritmus probíhá v souboru \texttt{main.c}, popsaný pseudokódem \ref{alg:mainAlgo} na straně \pageref{alg:mainAlgo}. Algoritmus využívá zejména funkce modulu \texttt{classifier}:
+ 	 	
+ 	\begin{itemize}
+ 		\item \texttt{classifier\_train()} – načte trénovací soubory do tabulky
+ 		\item \texttt{compute\_probability()} – vypočítá pravděpodobnost spamu/hamu
+ 		\item \texttt{classifier\_test()} – načte a klasifikuje testovací soubory
+ 	\end{itemize}
+ 	
+ 	\begin{algorithm}
+ 		\begin{algorithmic}[1]
+ 			\Procedure{Main}{argc, argv[]}
+ 		
+ 			\StartComment{Funkce jednotlivých argumentů definována v souboru \texttt{main.c}}
+ 			\State $\textit{spam\_pattern, ham\_pattern, test\_pattern}$
+ 			\State $\textit{spam\_count, ham\_count, test\_count}$
+ 			\State $\textit{output}$
+ 		
+ 			\StartComment{Definováno v souboru \texttt{config.h}}
+ 			\State $\textit{FLAG\_SPAM, FLAG\_HAM}$
+ 		
+ 			\StartComment{Vytvoří prázdnou hash tabulku}
+ 			\State $\textit{table} \gets \textbf{hash\_table} \textit{ table\_create()}$
+ 		
+ 			\StartComment{Načte trénovací soubory do tabulky}
+ 			\State $\textit{classifier\_train}\text{(table, spam\_pattern, spam\_count, FLAG\_SPAM)}$
+ 			\State $\textit{classifier\_train}\text{(table, ham\_pattern, ham\_count, FLAG\_HAM)}$
+ 		
+ 			\StartComment{Vypočítá pravděpodobnost výskytu slov v tabulce}
+ 			\State $\textit{compute\_probability}\text{(table)}$
+ 		
+ 			\StartComment{Klasifikuje testovací soubory}
+ 			\State $\textit{classifier\_test}\text{(table, test\_pattern, test\_count, output)}$
+ 		
+ 			\StartComment{Uvolní použitou paměť}
+ 			\State $\textit{table\_free}\text{(table)}$
+ 		
+ 			\EndProcedure
+ 		\end{algorithmic} 	
+ 		\caption{Algoritmus vykonaný souborem \texttt{main.c}}
+ 		\label{alg:mainAlgo}
+ 	\end{algorithm}
+ 
+ 	U \textbf{načítání trénovacích souborů} předáváme parametr \texttt{FLAG\_SPAM} pro spamový soubor nebo \texttt{FLAG\_HAM} pro hamový soubor, které jsou definovány v souboru \texttt{config.h}.
+ 	
+ 	\textbf{Klasifikace testovacích souborů} probíhá způsobem \textit{on the fly} popsaným v sekci \ref{klasifikace}.
+ 	 	
 	% Uživatelská příručka
 	\chapter{Uživatelská příručka}
-	Příliš žluťoučký kůň úpěl ďábelské ódy.
+	Úloha je zamýšlena pro \textbf{spuštění v konzoli}. Při běhu programu se neočekává žádná interakce s uživatelem.
+	
+	\section{Přeložení programu}
+	Program se přeloží pomocí nástroje \texttt{make}. V archivu jsou připraveny dvě verze souboru \texttt{makefile}, jedna pro operační systémy typu \textbf{UNIX}, druhá pro systémy \textbf{Windows}. Na přeložení je nutné mít \textbf{nainstalovaný kompilátor} \texttt{gcc}. Pokud se program povedlo přeložit, vytvoří se v adresáři \textbf{spustitelný soubor} \texttt{spamid}.
+		
+	\section{Spuštění programu}
+	Spuštění probíhá v \textbf{příkazové řádce} operačního systému. Program očekává celkem 7 parametrů, při jejich nesprávném počtu nebo při zadání nevalidní hodnoty program ukončí činnost a vypíše způsob jeho spuštění i s příkladem. Spuštění je tedy následující:
+	
+	\indentt{\texttt{spamid.exe} \laratexttt{spam} \laratexttt{spam-cnt} \laratexttt{ham} \laratexttt{ham-cnt} \laratexttt{test} \laratexttt{test-cnt} \laratexttt{out-file}$\,$\keys{\return}}
+	
+	\textbf{Před spuštěním} se očekává, že v adresáři \texttt{data} jsou umístěny \textbf{trénovací a testovací soubory}. Ukázka adresářové struktury je vidět na obrázku \ref{fig:struktura} na straně \pageref{fig:struktura}. Cestu k adresáři s těmito soubory můžeme změnit v souboru \texttt{config.h}. Program umí pracovat pouze s textovými soubory (přípona \texttt{.txt}) obsahující pouze \textbf{jeden řádek slov}, každé \textbf{oddělené mezerou}.
+	
+	\begin{figure}
+		\centering
+		\begin{minipage}{40mm}
+			\dirtree{%
+				.1 /.
+				.2 spamid.exe.
+				.2 result.txt.
+				.2 data.
+				.3 spam1.txt.
+				.3 spam2.txt.
+				.3 spam3.txt.
+				.3 ham1.txt.
+				.3 ham2.txt.
+				.3 test1.txt.
+				.3 test2.txt.
+			}
+		\end{minipage}
+		\caption{Ukázka adresářové struktury}
+		\label{fig:struktura}
+	\end{figure}
+	
+	\textbf{Výsledkem programu} je výstupní soubor s názvem \laratexttt{out-file}. Při zadávání názvu souboru musíme zahrnout i příponu (\texttt{.txt}). Výstup obsahuje na každém řádku jméno testovaného souboru a jeho klasifikaci (\texttt{S} pro spam, \texttt{H} pro ham) v následujícím formátu:
+	
+	\indentt{\laratexttt{jméno souboru} \laratexttt{tabulátor} \laratexttt{klasifikace} \laratexttt{znak konce řádku}}
+
+	Na obrázku \ref{fig:vystup} je vidět ukázka konkrétního výstupu.
+	
+	\begin{figure}
+		\centering
+		\begin{minipage}{40mm}
+			\texttt{test1.txt}\,\tab\, \texttt{S}\, \return\\
+			\texttt{test2.txt}\,\tab\, \texttt{S}\, \return\\
+			\texttt{test3.txt}\,\tab\, \texttt{H}\, \return\\
+			\texttt{test4.txt}\,\tab\, \texttt{S}\, \return\\
+			\texttt{test5.txt}\,\tab\, \texttt{H}\, \return
+		\end{minipage}
+		\caption{Ukázka výstupního souboru}
+		\label{fig:vystup}
+	\end{figure}
 	
 	% Závěr
 	\chapter{Závěr}
-	Příliš žluťoučký kůň úpěl ďábelské ódy.
 	
+	\section{Shrnutí}
+	Klasifikátor dokáže identifikovat spamové či hamové soubory \textbf{s přesností 93 \%}. Tato hodnota vyhovuje \textbf{minimální hranici přesnosti 90 \%}, povedlo se nám tedy vytvořit \textbf{klasifikátor splňující zadání}. Při programování jsme využili \textbf{vlastní implementaci hash tabulky}, jelikož standard ANSI C nenabízí žádnou podobnou datovou strukturu. \textbf{Klasifikaci souborů} jsme prováděli způsobem \textit{on the fly}, jelikož je jednodušší na implementaci a nezabírá zbytečně paměť.
+	
+	\section{Zhodnocení}
+	\textbf{Nejobtížnější část práce} bylo pochopit, jakým způsobem funguje \textbf{naivní bayesovský klasifikátor}. Dále jsem měl problémy s \textbf{korektním uvolňováním paměti}, s tím mi naštěstí pomohl nástroj \texttt{valgrind}. Práce jinak probíhala \textbf{bez větších potíží}. Kód jsem se snažil psát \textbf{systematicky} a zároveň dodržovat veškerá \textbf{pravidla standardu ANSI C}.
+	
+	\section{Možná vylepšení}
+	Některé části programu by se mohly \textbf{více zobecnit}, například struktura \texttt{hash\_table}, konkrétně její položka \texttt{entry}. Mohlo by se jednat o \textbf{abstraktní položku spojového seznamu}, která by si uchovávala \textbf{referenci na stávající položku}. Atribut \texttt{next} by v tomto případě \textbf{ukazoval na obal} položky. Tímto způsobem bysme zvýšili \textbf{znovupoužitelnost kódu}.
 \end{document}
