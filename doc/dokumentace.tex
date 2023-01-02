@@ -272,7 +272,7 @@
 	Program se překládá pomocí nástroje \texttt{make}. V archivu jsou připraveny dvě verze souboru \texttt{makefile}, jedna pro operační systémy typu \textbf{UNIX}, druhá pro systémy \textbf{Windows}. Na přeložení je nutné mít \textbf{nainstalovaný kompilátor} \texttt{gcc}. Pokud se program povedlo přeložit, vytvoří se v adresáři \textbf{spustitelný soubor} \texttt{spamid}.
 		
 	\section{Spuštění programu}
-	Spuštění probíhá v \textbf{příkazové řádce} operačního systému. Program očekává celkem 7 parametrů, při jejich nesprávném počtu nebo při zadání nevalidní hodnoty program ukončí činnost a vypíše způsob jeho spuštění i s příkladem. Spuštění je tedy následující:
+	Spuštění probíhá v \textbf{příkazové řádce} operačního systému. Program očekává celkem 7~parametrů, při jejich nesprávném počtu nebo při zadání nevalidní hodnoty program ukončí činnost a vypíše způsob jeho spuštění i s příkladem. Spuštění je tedy následující:
 	
 	\indentt{\texttt{spamid.exe} \laratexttt{spam} \laratexttt{spam-cnt} \laratexttt{ham} \laratexttt{ham-cnt} \laratexttt{test} \laratexttt{test-cnt} \laratexttt{out-file}$\,$\keys{\return}}
 	
@@ -330,4 +330,5 @@
 	
 	\section{Možná vylepšení}
 	Některé části programu by se mohly \textbf{více zobecnit}, například struktura \texttt{hash\_table}, konkrétně její položka \texttt{entry}. Mohlo by se jednat o \textbf{abstraktní položku spojového seznamu}, která by si uchovávala \textbf{referenci na stávající položku}. Atribut \texttt{next} by v~tomto případě \textbf{ukazoval na obal} položky. Tímto způsobem bychom zvýšili \textbf{znovupoužitelnost kódu}.
+	
 \end{document}
