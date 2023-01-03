@@ -49,6 +49,10 @@
 \algnewcommand{\StartComment}[1]{
 	\State\(\triangleright\) #1
 	}											% komentar pseudokodu
+
+\algnewcommand{\bracketbf}[1]{
+	\text{(} \textbf{#1} \text{)}
+	}												% textbf v normalnich zavorkach ()
 		
 % Begin
 \begin{document}
@@ -87,7 +91,7 @@
 		\item Celočíselná kalkulačka s neomezenou přesností
 	\end{enumerate}
 		
-	V této práci je popsáno řešení práce \textbf{číslo 2}.
+	V této dokumentaci je popsáno řešení práce \textbf{číslo 2}.
 	
 	\section{Detaily zadání}
 	Naprogramujte v ANSI C přenositelnou \textbf{konzolovou aplikaci}, která bude \textbf{rozhodovat, zda úsek textu} (textový soubor předaný jako parametr na příkazové řádce) \textbf{je nebo není spam}.
@@ -150,9 +154,9 @@
 		Na obrázku \ref{fig:spojovySeznam} na straně \pageref{fig:spojovySeznam} je vidět grafické znázornění spojového seznamu.
 					
 		\subsection{Tabulka s rozptýlenými hodnotami}
-		\textbf{Tabulka s rozptýlenými hodnotami}, tzv. \textit{hash tabulka}, je datová struktura, která umožňuje rychlou manipulaci prvků podle \textbf{klíče}. Ke své činnosti využívá \textbf{hashovací funkci}, pomocí které získáme přístup k~indexu položek. Kvalita této funkce se odrazí na celkové kvalitě tabulky. Chceme, aby funkce generovala vždy \textbf{stejné číslo pro stejný vstup}. Poté je důležité, aby funkce přiřazovala novým položkám indexy \textbf{rovnoměrného rozdělení}. Je také důležité se co nejvíce \textbf{vyhýbat kolizím}. Právě kvůli kolizím je ve skutečnosti na každém indexu tabulky uložen spojový seznam. Pokud k~nějaké kolizi dojde, jednoduše přiřadíme hodnotu do spojového seznamu. \textbf{Časová složitost přidání} prvku do tabulky je tedy \textit{O(1)}. Při hledání prvku získáme index, na kterém se prvek nachází, v čase \textit{O(1)}. Poté stačí hodnotu hledat ve spojovém seznamu. Pokud máme \textbf{velmi dobrou hashovací funkci}, na každém indexu tabulky by se nacházel právě jeden prvek. \textbf{Celková časová složitost hledání} by tedy byla \textit{O(1)}. Při použití \textbf{mizerné hashovací funkce} bude docházet ke kolizím a v nejhorším případě se všechny prvky tabulky přiřadí právě na jeden index. V takovém případě by \textbf{celková časová složitost hledání} byla \textit{O(n)}.
+		\textbf{Tabulka s rozptýlenými hodnotami}, tzv. \textit{hash tabulka}, je datová struktura, která umožňuje rychlou manipulaci prvků podle \textbf{klíče}. Ke své činnosti využívá \textbf{hashovací funkci}, pomocí které získáme přístup k~indexu položek. Kvalita této funkce se odrazí na celkové kvalitě tabulky. Chceme, aby funkce generovala vždy \textbf{stejné číslo pro stejný vstup}. Poté je důležité, aby funkce přiřazovala novým položkám indexy \textbf{rovnoměrného rozdělení}. Je také důležité se co nejvíce \textbf{vyhýbat kolizím}. Právě kvůli kolizím je ve skutečnosti na každém indexu tabulky uložen spojový seznam. Pokud k~nějaké kolizi dojde, jednoduše přiřadíme hodnotu do spojového seznamu. \textbf{Časová složitost přidání} prvku do tabulky je tedy \textit{O(1)}. Při hledání prvku získáme index, na kterém se prvek nachází, v čase \textit{O(1)}. Poté stačí hodnotu hledat ve spojovém seznamu. Pokud máme \textbf{velmi dobrou hashovací funkci}, na každém indexu tabulky by se nacházel právě jeden prvek. \textbf{Celková časová složitost hledání} by tedy byla \textit{O(1)}. Při použití \textbf{mizerné hashovací funkce} bude docházet ke kolizím a v nejhorším případě se~všechny prvky tabulky přiřadí právě na jeden index. V takovém případě by \textbf{celková časová složitost hledání} byla \textit{O(n)}.
 		
-		Pro řešení práce \textbf{byla využita} právě hash tabulka, jelikož je to pro náš účel ideální datová struktura. Při samotné implementaci však budeme muset dbát na vymýšlení co nejlepší hashovací funkce.
+		Pro řešení práce \textbf{byla využita} právě hash tabulka, jelikož je to pro náš účel ideální datová struktura. Při implementaci však budeme muset dbát na vymýšlení co nejlepší hashovací funkce.
 		
 		Na obrázku \ref{fig:hashTabulka} na je vidět grafické znázornění tabulky s rozptýlenými hodnotami.
 
@@ -172,7 +176,7 @@
 	
 	\section{Způsob klasifikace}
 	\label{klasifikace}
-	Zde se nabízí dvě možnosti: (i) Vytvoříme další \textbf{slovník} obsahující slova testovacího souboru, který následně \textbf{porovnáme se slovníkem klasifikátoru}, (ii) nebo jednotlivá slova budeme porovnávat tzv. \textit{on the fly}, kde \textbf{postupným čtením slov} počítáme pravděpodobnost tříd a soubor klasifikujeme jako spam či ham \textbf{bez vytváření dalšího slovníku}. Výhoda přístupu (i) je uchování čitelnosti programu za cenu vyšší paměťové náročnosti. Výhoda přístupu (ii) je jednoduchost implementace bez nároků na paměť.
+	Zde se nabízí dvě možnosti: (i) Vytvoříme další \textbf{slovník} obsahující slova testovacího souboru, který následně \textbf{porovnáme se slovníkem klasifikátoru}, (ii) nebo jednotlivá slova budeme porovnávat způsobem \textit{on the fly}, kde \textbf{postupným čtením slov} počítáme pravděpodobnost tříd a soubor klasifikujeme jako spam či ham \textbf{bez vytváření dalšího slovníku}. Výhoda přístupu (i) je uchování čitelnosti programu za cenu vyšší paměťové náročnosti. Výhoda přístupu (ii) je jednoduchost implementace bez nároků na paměť.
 	
 	Při řešení této semestrální práce byl využit postup (ii).
 	
@@ -186,11 +190,11 @@
  	\begin{itemize}
  		\item \texttt{hash\_table} – datová struktura hash tabulky
  		\item \texttt{hash\_table\_entry} – datová struktura položky pro hash tabulku
- 		\item \texttt{classifier} – bayesovský klasifikátor
- 		\item \texttt{error} – obsahuje chybové hlášky
+ 		\item \texttt{classifier} – funkce bayesovského klasifikátoru
+ 		\item \texttt{error} – chybové hlášky
  	\end{itemize}
  
- 	Dále se v práci nachází soubor \texttt{main.c}, který \textbf{vykonává algoritmus} naivního bayesovského klasifikátoru a \textbf{spouští program}. Nakonec je v projektu soubor \texttt{config.h}, kde jsou \textbf{pomocné definice}. 
+ 	Dále se v práci nachází soubor \texttt{main.c}, který \textbf{vykonává algoritmus} naivního bayesovského klasifikátoru a \textbf{spouští program}. Nakonec je v projektu soubor \texttt{config.h}, kde jsou zapsány \textbf{pomocné definice}. 
  	
  	\section{Implementace hash tabulky}
     Implementace hash tabulky je rozdělena na \textbf{dvě části}, jednou je \textbf{položka tabulky}, druhou \textbf{samotná tabulka}. Každá část má svou \textbf{vlastní strukturu}.
@@ -228,31 +232,34 @@
  	
  	\begin{algorithm}
  		\begin{algorithmic}[1]
- 			\Procedure{Main}{argc, argv[]}
+ 			\Procedure{Main}{int \textbf{argc}, char *\textbf{argv[]}}
+ 			
+ 			\StartComment{Kontrola argumentů programu}
+ 			\State $\textit{handle\_input} \bracketbf{argc, argv}$
  		
- 			\StartComment{Funkce jednotlivých argumentů definována v souboru \texttt{main.c}}
- 			\State $\textit{spam\_pattern, ham\_pattern, test\_pattern}$
- 			\State $\textit{spam\_count, ham\_count, test\_count}$
- 			\State $\textit{output}$
+ 			\StartComment{Význam argumentů definován v souboru \texttt{main.c}}
+ 			\State $\text{char *}\textbf{spam\_pattern, ham\_pattern, test\_pattern} \gets \textbf{argv}$
+ 			\State $\text{size\_t } \textbf{spam\_count, ham\_count, test\_count} \gets \textit{strtol} \text{(} \textbf{argv} \text{)}$
+ 			\State $\text{char *}\textbf{output} \gets \textbf{argv}$
  		
  			\StartComment{Definováno v souboru \texttt{config.h}}
- 			\State $\textit{FLAG\_SPAM, FLAG\_HAM}$
+ 			\State $\text{int }\textbf{FLAG\_SPAM, FLAG\_HAM}$
  		
  			\StartComment{Vytvoří prázdnou hash tabulku}
- 			\State $\textit{table} \gets \textbf{hash\_table} \textit{ table\_create()}$
+ 			\State $\text{hash\_table *} \textbf{table} \gets \textit{table\_create()}$
  		
  			\StartComment{Načte trénovací soubory do tabulky}
- 			\State $\textit{classifier\_train}\text{(table, spam\_pattern, spam\_count, FLAG\_SPAM)}$
- 			\State $\textit{classifier\_train}\text{(table, ham\_pattern, ham\_count, FLAG\_HAM)}$
+ 			\State $\textit{classifier\_train}\bracketbf{table, spam\_pattern, spam\_count, FLAG\_SPAM}$
+ 			\State $\textit{classifier\_train}\bracketbf{table, ham\_pattern, ham\_count, FLAG\_HAM}$
  		
  			\StartComment{Vypočítá pravděpodobnost výskytu slov v tabulce}
- 			\State $\textit{compute\_probability}\text{(table)}$
+ 			\State $\textit{compute\_probability}\bracketbf{table}$
  		
  			\StartComment{Klasifikuje testovací soubory}
- 			\State $\textit{classifier\_test}\text{(table, test\_pattern, test\_count, output)}$
+ 			\State $\textit{classifier\_test}\bracketbf{table, test\_pattern, test\_count, output}$
  		
  			\StartComment{Uvolní použitou paměť}
- 			\State $\textit{table\_free}\text{(table)}$
+ 			\State $\textit{table\_free}\bracketbf{table}$
  		
  			\EndProcedure
  		\end{algorithmic} 	
@@ -266,7 +273,7 @@
  	 	
 	% Uživatelská příručka
 	\chapter{Uživatelská příručka}
-	Úloha je zamýšlena pro \textbf{spuštění v konzoli}. Při běhu programu se neočekává žádná interakce s uživatelem.
+	Úloha je zamýšlena pro \textbf{spouštění v konzoli}. Při běhu programu se neočekává žádná interakce s uživatelem.
 	
 	\section{Přeložení programu}
 	Program se překládá pomocí nástroje \texttt{make}. V archivu jsou připraveny dvě verze souboru \texttt{makefile}, jedna pro operační systémy typu \textbf{UNIX}, druhá pro systémy \textbf{Windows}. Na přeložení je nutné mít \textbf{nainstalovaný kompilátor} \texttt{gcc}. Pokud se program povedlo přeložit, vytvoří se v adresáři \textbf{spustitelný soubor} \texttt{spamid}.
